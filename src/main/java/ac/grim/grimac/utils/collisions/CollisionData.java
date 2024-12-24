@@ -543,13 +543,16 @@ public enum CollisionData {
     FENCE(new DynamicCollisionFence(), BlockTags.FENCES.getStates().toArray(new StateType[0])),
 
     SNOW((player, version, data, x, y, z) -> {
-        if (data.getLayers() == 1 && version.isNewerThanOrEquals(ClientVersion.V_1_13)) {
+        int layers = data.getLayers();
+        if (layers == 1 && version.isNewerThanOrEquals(ClientVersion.V_1_13)) {
             if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_13) || !ViaVersionUtil.isAvailable() || !Via.getConfig().isSnowCollisionFix()) {
                 return NoCollisionBox.INSTANCE;
+            } else {
+                layers++;
             }
         }
 
-        return new SimpleCollisionBox(0, 0, 0, 1, (data.getLayers() - 1) * 0.125, 1);
+        return new SimpleCollisionBox(0, 0, 0, 1, (layers - 1) * 0.125, 1);
     }, StateTypes.SNOW),
 
     STAIR(new DynamicStair(), BlockTags.STAIRS.getStates().toArray(new StateType[0])),
