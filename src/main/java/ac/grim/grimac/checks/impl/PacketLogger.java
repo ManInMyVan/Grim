@@ -28,6 +28,8 @@ public class PacketLogger extends Check implements PacketCheck {
 
     private static final Map<PacketTypeCommon, Class<? extends PacketWrapper<?>>> map = new HashMap<>();
 
+    private long last = -1;
+
     @SneakyThrows
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
@@ -57,7 +59,10 @@ public class PacketLogger extends Check implements PacketCheck {
         File file = new File(path + "\\" + player.getName() + ".txt");
         file.createNewFile();
         Writer output = new BufferedWriter(new FileWriter(file, true));
-        output.append(o + "\n");
+        long now = System.currentTimeMillis();
+        long delay = last == -1 ? 0 : now - last;
+        last = now;
+        output.append(delay + "ms " + o + "\n");
         output.close();
     }
 
