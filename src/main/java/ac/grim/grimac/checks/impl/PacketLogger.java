@@ -1,42 +1,70 @@
 package ac.grim.grimac.checks.impl;
 
-import ac.grim.grimac.GrimAC;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.world.BlockFace;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.client.*;
+import lombok.SneakyThrows;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.github.retrooper.packetevents.protocol.packettype.PacketType.Play.Client.*;
 
 public class PacketLogger extends Check implements PacketCheck {
     public PacketLogger(GrimPlayer player) {
         super(player);
     }
 
+    private static final Map<PacketTypeCommon, Class<? extends PacketWrapper<?>>> map = new HashMap<>();
+
+    @SneakyThrows
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.INTERACT_ENTITY) {
-            WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
-            GrimAPI.INSTANCE.getPlugin().getLogger().info(packet.getAction() + "");
+        PacketTypeCommon packetType = event.getPacketType();
+        Class<? extends PacketWrapper<?>> clazz = map.get(packetType);
+        StringBuilder message = new StringBuilder(packetType + "");
+        if (clazz != null) {
+            PacketWrapper<?> packet = clazz.getDeclaredConstructor(PacketReceiveEvent.class).newInstance(event);
+            message.append("{");
+            var fields = List.of(clazz.getDeclaredFields()).iterator();
+            while (fields.hasNext()) {
+                Field field = fields.next();
+                field.setAccessible(true);
+                message.append(field.getName()).append("=").append(field.get(packet));
+                if (fields.hasNext()) message.append(",");
+            }
+            message.append("}");
         }
 
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
-            WrapperPlayClientPlayerBlockPlacement packet = new WrapperPlayClientPlayerBlockPlacement(event);
-            GrimAPI.INSTANCE.getPlugin().getLogger().info(packet.getFace() == BlockFace.OTHER ? "USE" : "PLACE");
-        }
+        log(message.toString());
+    }
 
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
-            WrapperPlayClientPlayerDigging packet = new WrapperPlayClientPlayerDigging(event);
-            GrimAPI.INSTANCE.getPlugin().getLogger().info(packet.getAction() + "");
-        }
+    @SneakyThrows
+    private void log(Object o) {
+        var path = GrimAPI.INSTANCE.getPlugin().getDataFolder().getPath() + "\\packetlog";
+        new File(path).mkdir();
+        File file = new File(path + "\\" + player.getName() + ".txt");
+        file.createNewFile();
+        Writer output = new BufferedWriter(new FileWriter(file, true));
+        output.append(o + "\n");
+        output.close();
+    }
 
-        if (WrapperPlayClientPlayerFlying.isFlying(event.getPacketType())) {
-            GrimAPI.INSTANCE.getPlugin().getLogger().info("FLYING");
-        }
+    static {
+        map.put(INTERACT_ENTITY, WrapperPlayClientInteractEntity.class);
+        map.put(PLAYER_DIGGING, WrapperPlayClientPlayerDigging.class);
+        map.put(USE_ITEM, WrapperPlayClientUseItem.class);
+        map.put(PLAYER_BLOCK_PLACEMENT, WrapperPlayClientPlayerBlockPlacement.class);
     }
 }
