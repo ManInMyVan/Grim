@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission
 plugins {
     id("java")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.0.0-beta6"
     id("io.freefair.lombok") version "8.6"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
     id("com.diffplug.spotless") version "6.25.0"
@@ -26,7 +26,7 @@ spotless {
 }
 
 group = "ac.grim.grimac"
-version = "2.3.69"
+version = "2.3.71"
 description = "Libre simulation anticheat designed for 1.21 with 1.8-1.21 support, powered by PacketEvents 2.0."
 
 java {
@@ -68,16 +68,17 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:8.5.15")
     implementation("github.scarsz:configuralize:1.4.0")
 
-    //implementation("com.github.grimanticheat:grimapi:1193c4fa41")
-    // Used for local testing: implementation("ac.grim.grimac:GRIMAPI:1.0")
-    implementation("com.github.grimanticheat:grimapi:d7fdef7186")
+
+    // Used for local testing:
+    //implementation("ac.grim.grimac:GrimAPI:1.0")
+    implementation("com.github.grimanticheat:grimapi:ed1ec7b4a1")
 
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
 
     implementation("org.jetbrains:annotations:24.1.0")
     compileOnly("org.geysermc.floodgate:api:2.0-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.viaversion:viaversion-api:5.0.4-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("io.netty:netty-all:4.1.85.Final")
@@ -130,6 +131,11 @@ bukkit {
             default = Permission.Default.OP
         }
 
+        register("grim.brand.enable-on-join") {
+            description = "Enable showing client brands on join"
+            default = Permission.Default.OP
+        }
+
         register("grim.sendalert") {
             description = "Send cheater alert"
             default = Permission.Default.OP
@@ -176,6 +182,10 @@ publishing.publications.create<MavenPublication>("maven") {
 }
 
 tasks.shadowJar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+
     minimize()
     archiveFileName.set("${project.name}-${project.version}.jar")
     if (relocate) {

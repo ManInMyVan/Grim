@@ -22,7 +22,7 @@ public class BaseConfigManager {
     // initialize the config
     public void load(ConfigManager config) {
         this.config = config;
-        //
+
         int configuredMaxTransactionTime = config.getIntElse("max-transaction-time", 60);
         if (configuredMaxTransactionTime > 180 || configuredMaxTransactionTime < 1) {
             LogUtil.warn("Detected invalid max-transaction-time! This setting is clamped between 1 and 180 to prevent issues. Attempting to disable or set this too high can result in memory usage issues.");
@@ -39,16 +39,22 @@ public class BaseConfigManager {
 
         printAlertsToConsole = config.getBooleanElse("alerts.print-to-console", true);
         prefix = config.getStringElse("prefix", "&bGrim &8»");
+
+        disconnectTimeout = config.getStringElse("disconnect.timeout", "<lang:disconnect.timeout>");
+        disconnectClosed = config.getStringElse("disconnect.closed", "<lang:disconnect.timeout>");
+        disconnectPacketError = config.getStringElse("disconnect.error", "<red>An error occurred whilst processing packets. Please contact the administrators.");
     }
 
     // ran on start, can be used to handle things that can't be done while loading
-    public void start() {
-
-    }
+    public void start() {}
 
     @Getter private boolean printAlertsToConsole = false;
 
     @Getter private String prefix = "&bGrim &8»";
+
+    @Getter private String disconnectTimeout;
+    @Getter private String disconnectClosed;
+    @Getter private String disconnectPacketError;
 
     private final List<Pattern> ignoredClientPatterns = new ArrayList<>();
 

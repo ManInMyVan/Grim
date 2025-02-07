@@ -1,6 +1,6 @@
 # Configuração padrão do GrimAC
 # Código fonte: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside e contribuidores, Sob licença GPLv3.
+# Copyright 2025 DefineOutside e contribuidores, Sob licença GPLv3.
 # Códigos modificados, ou plugins que utilizam o código do Grim, devem ser privados,
 # ou seu código deve estar totalmente disponível para compradores sem quaisquer custos adicionais.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Isso signifia que, caso a marca do cliente seja igual às listadas abaixo, não será notificado aos
   # administradores.
@@ -26,6 +28,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Esconde todos espectadores com a permissão 'grim.spectator' mesmo se não estiverem ativamente espectando.
@@ -89,7 +92,7 @@ RotationPlace:
 # Grim considera erros no netcode. Difícil de gerar falsos positivos, até mesmo spamando o blotão direito e a offhand.
 # Muito mais estável que outros anticheats, mas por favor, reporte quaisquer falsos positivos. Eu já arrumei diversos
 # erros de netcode.
-NoSlowA:
+NoSlow:
   # Quanto de desalinhamento é considerado trapaça?
   # Por padrão é menor que os outros.
   # Em 0.03-0.2 detecta com consistência.
@@ -138,9 +141,6 @@ TimerVehicle:
   # Detecta até 1.005 de timer.
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # Por quanto deve-se expandir as caixas de colisão? 0.0005 deve detectar 3.0005+ de alcance.
   #
@@ -177,6 +177,9 @@ debug-pipeline-on-join: false
 
 # Habilita verificações experimentais.
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim às vezes cancela pacotes ilegais como com o timer, depois de X pacotes em um segundo que foram cancelados, quando
 # deve-se simplesmente expulsar o jogador? Isso é requirido já que alguns limitadores de pacotes não contam pacotes

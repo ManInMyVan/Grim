@@ -1,4 +1,4 @@
-package ac.grim.grimac.checks.impl.movement;
+package ac.grim.grimac.checks.impl.sprint;
 
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
@@ -11,9 +11,9 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEn
 
 import static com.github.retrooper.packetevents.protocol.potion.PotionTypes.BLINDNESS;
 
-@CheckData(name = "NoSlowE", description = "Started sprinting while having blindness", setback = 5, experimental = true)
-public class NoSlowE extends Check implements PostPredictionCheck {
-    public NoSlowE(GrimPlayer player) {
+@CheckData(name = "SprintD", description = "Started sprinting while having blindness", setback = 5, experimental = true)
+public class SprintD extends Check implements PostPredictionCheck {
+    public SprintD(GrimPlayer player) {
         super(player);
     }
 
@@ -30,11 +30,9 @@ public class NoSlowE extends Check implements PostPredictionCheck {
 
     @Override
     public void onPredictionComplete(final PredictionComplete predictionComplete) {
-        if (!predictionComplete.isChecked()) return;
-
-        if (player.compensatedEntities.getSelf().hasPotionEffect(BLINDNESS)) {
+        if (player.compensatedEntities.self.hasPotionEffect(BLINDNESS)) {
             if (player.isSprinting && !startedSprintingBeforeBlind) {
-                if (flagWithSetback()) alert("");
+                flagAndAlertWithSetback();
             } else reward();
         }
     }

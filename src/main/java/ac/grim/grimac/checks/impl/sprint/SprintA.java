@@ -1,4 +1,4 @@
-package ac.grim.grimac.checks.impl.movement;
+package ac.grim.grimac.checks.impl.sprint;
 
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
@@ -7,10 +7,10 @@ import ac.grim.grimac.player.GrimPlayer;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
 
-@CheckData(name = "NoSlowB", description = "Sprinting with too low hunger", setback = 5)
-public class NoSlowB extends Check implements PacketCheck {
+@CheckData(name = "SprintA", description = "Sprinting with too low hunger", setback = 0)
+public class SprintA extends Check implements PacketCheck {
 
-    public NoSlowB(GrimPlayer player) {
+    public SprintA(GrimPlayer player) {
         super(player);
     }
 
@@ -21,14 +21,15 @@ public class NoSlowB extends Check implements PacketCheck {
             if (player.canFly) return;
 
             if (player.food < 6.0F && player.isSprinting) {
-                if (flag()) {
+                if (flagAndAlert()) {
                     // Cancel the packet
                     if (shouldModifyPackets()) {
                         event.setCancelled(true);
                         player.onPacketCancel();
                     }
-                    alert("");
-                    player.getSetbackTeleportUtil().executeNonSimulatingSetback();
+                    if (shouldSetback()) {
+                        player.getSetbackTeleportUtil().executeNonSimulatingSetback();
+                    }
                 }
             } else {
                 reward();

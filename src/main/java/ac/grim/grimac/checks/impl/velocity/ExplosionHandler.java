@@ -81,7 +81,7 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
                     player.compensatedWorld.updateBlock(record.x, record.y, record.z, 0);
                 } else {
                     // We need to flip redstone blocks, or do special things with other blocks
-                    final WrappedBlockState state = player.compensatedWorld.getWrappedBlockStateAt(record);
+                    final WrappedBlockState state = player.compensatedWorld.getBlock(record);
                     final StateType type = state.getType();
                     if (BlockTags.CANDLES.contains(type) || BlockTags.CANDLE_CAKES.contains(type)) {
                         state.setLit(false);
@@ -204,27 +204,14 @@ public class ExplosionHandler extends Check implements PostPredictionCheck {
         }
 
         // 100% known kb was taken
-        if (player.likelyExplosions != null) {
+        if (player.likelyExplosions != null && !player.compensatedEntities.self.isDead) {
             if (player.likelyExplosions.offset > offsetToFlag) {
-                if (flag()) {
-                    if (getViolations() > setbackVL) {
-                        player.getSetbackTeleportUtil().executeViolationSetback();
-                    }
-                }
-
-                String formatOffset = "o: " + formatOffset(offset);
-
-                if (player.likelyExplosions.offset == Integer.MAX_VALUE) {
-                    formatOffset = "ignored explosion";
-                }
-
-                alert(formatOffset);
+                flagAndAlertWithSetback(player.likelyExplosions.offset == Integer.MAX_VALUE ? "ignored explosion" : "o: " + formatOffset(offset));
             } else {
                 reward();
             }
         }
     }
-
 
     public VelocityData getPossibleExplosions(int lastTransaction, boolean isJustTesting) {
         handleTransactionPacket(lastTransaction);

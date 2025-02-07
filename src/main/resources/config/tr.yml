@@ -1,6 +1,6 @@
 # GrimAC ana konfigrasyon dosyası
 # Kaynak kodu: https://github.com/MWHunter/Grim
-# Telif Hakkı 2024 DefineOutside ve katkıda bulunanlar, GPLv3 altında lisanslanmıştır.
+# Telif Hakkı 2025 DefineOutside ve katkıda bulunanlar, GPLv3 altında lisanslanmıştır.
 # Değiştirilmiş ikili dosyalar veya kopyalanmış grim kodlu eklentiler özel olmalıdır,
 # veya ek ücret ödemeden alıcılara sunulan tam kaynak kodu ile.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Bu, giriş yapılan clientin aşağıdaki regex'lerle eşleşmesi durumunda markalarını operatörlere yayınlamayacağı anlamına gelir
   ignored-clients:
@@ -25,6 +27,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Seyirciler aktif olarak izliyor olsalar bile, grim.spectator iznine sahip tüm seyircileri gizle
@@ -87,7 +90,7 @@ RotationPlace:
 # Tahmin tabanlı yavaşlama kontrolü
 # Grim burada hatalı ağ kodunu dikkate alır... sağ tıklama ve el yan tuşunu spam yapsanız bile yanlış pozitiflik oluşturması zordur
 # Diğer anti-hilelerden çok daha stabil, ancak herhangi bir yanlış pozitif rapor edin... burada birçok ağ kodu sorununu çözdüm.
-NoSlowA:
+NoSlow:
   # Ne kadar bir sapma "hile" olarak kabul edilir?
   # Varsayılan olarak bu, diğer sapmalardan daha düşüktür
   # NoSlow açıkken 0.03-0.2 aralığında sürekli olarak uyarı verir
@@ -135,9 +138,6 @@ TimerVehicle:
   # Hedef 1.005 timer
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # Hitbox'ları ne kadar genişletmeliyiz? 0.0005, 3.0005+ menzili tespit etmelidir
   #
@@ -172,6 +172,9 @@ debug-pipeline-on-join: false
 
 # Deneysel kontrolleri etkinleştir
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim bazen timer gibi yasa dışı paketleri iptal eder; bir saniyede X paket iptal edildikten sonra, ne zaman
 # oyuncuyu basitçe atmalıyız? Bu, bazı paket sınırlayıcılarının Grim tarafından iptal edilen paketleri saymaması gerektiğindendir.

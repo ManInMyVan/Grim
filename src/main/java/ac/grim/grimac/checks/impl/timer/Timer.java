@@ -1,4 +1,4 @@
-package ac.grim.grimac.checks.impl.movement;
+package ac.grim.grimac.checks.impl.timer;
 
 import ac.grim.grimac.api.config.ConfigManager;
 import ac.grim.grimac.checks.Check;
@@ -10,7 +10,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 
 @CheckData(name = "Timer", configName = "TimerA", setback = 10)
-public class TimerCheck extends Check implements PacketCheck {
+public class Timer extends Check implements PacketCheck {
     long timerBalanceRealTime = 0;
 
     // Default value is real time minus max keep-alive time
@@ -52,7 +52,7 @@ public class TimerCheck extends Check implements PacketCheck {
     //
     // We then take the last transaction before this to increase stability with these lag spikes and
     // to guarantee that we are at least 50 ms back before adding the time
-    public TimerCheck(GrimPlayer player) {
+    public Timer(GrimPlayer player) {
         super(player);
     }
 
@@ -74,7 +74,7 @@ public class TimerCheck extends Check implements PacketCheck {
 
     public void doCheck(final PacketReceiveEvent event) {
         if (timerBalanceRealTime > System.nanoTime()) {
-            if (flag()) {
+            if (flagAndAlert()) {
                 // Cancel the packet
                 // Only cancel if not an adjustment setback
                 if (shouldModifyPackets()) {
@@ -82,9 +82,9 @@ public class TimerCheck extends Check implements PacketCheck {
                     player.onPacketCancel();
                 }
 
-                if (isAboveSetbackVl()) player.getSetbackTeleportUtil().executeNonSimulatingSetback();
-
-                alert("");
+                if (shouldSetback()) {
+                    player.getSetbackTeleportUtil().executeNonSimulatingSetback();
+                }
             }
 
             // Reset the violation by 1 movement

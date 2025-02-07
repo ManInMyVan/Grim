@@ -1,6 +1,6 @@
 # GrimACのメイン設定
 # ソースコード: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside and contributors, Licensed under GPLv3.
+# Copyright 2025 DefineOutside and contributors, Licensed under GPLv3.
 # 改変されたバイナリやGrimのコードをコピーしたプラグインは、私的なものとするか、
 # 購入者に追加料金なしで完全なソースコードを公開する必要があります
 
@@ -20,6 +20,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # プレイヤーのクライアントブランドが以下の正規表現のいずれかと一致する場合、オペレータにはそのプレイヤーの情報が送信されません。
   ignored-clients:
@@ -27,6 +29,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # 'grim.spectator' パーミッションを持つプレイヤーを、実際にスペクテイター状態でなくても非表示にするかどうか。
@@ -89,7 +92,7 @@ RotationPlace:
 # 予測に基づく「NoSlow」チェック
 # Grimは、バグのあるネットコードを考慮しており、右クリックやオフハンドボタンを連打しても誤検知が起こりにくくなっています。
 # 他のアンチチートよりも安定していますが、もし誤検知があれば報告してください。ネットコードの問題を多数修正しています。
-NoSlowA:
+NoSlow:
   # どれだけのズレが「チート」として扱われるか
   # デフォルトで他のズレ基準よりも低めに設定されています
   # NoSlow（速度低下なし）の状態では、0.03〜0.2の範囲で一貫してフラグが立ちます
@@ -140,9 +143,6 @@ TimerVehicle:
   # 目標タイマー値は1.005です
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # ヒットボックスをどれだけ拡大するかを設定します。0.0005に設定することで3.0005以上のリーチを検出できます
   #
@@ -181,6 +181,9 @@ debug-pipeline-on-join: false
 
 # 実験的なチェックを有効にします
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grimは "Timer" のような違反パケットをキャンセルすることがありますが、1秒間にキャンセルされたパケット数がXを超えた場合、
 # プレイヤーを強制的にキックしますか？これは、いくつかのパケットリミッターがGrimによってキャンセルされたパケットをカウントしないためです。

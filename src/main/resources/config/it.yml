@@ -1,6 +1,6 @@
 # GrimAC main configuration
 # Source code: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside and contributors, Licensed under GPLv3.
+# Copyright 2025 DefineOutside and contributors, Licensed under GPLv3.
 # Modified binaries, or plugins with copied grim code, must be private,
 # or with full source code available to buyers at no additional cost.
 
@@ -19,6 +19,8 @@ verbose:
   # Mostra dettagli su console?
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Ignora i seguenti client nella trasmissione del marchio agli operatori
   ignored-clients:
@@ -26,6 +28,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Nascondi tutti gli spettatori con il permesso grim.spectator indipendentemente dal fatto che stiano effettivamente spettando attivamente
@@ -82,7 +85,7 @@ RotationPlace:
   # Livello di violazione per il piazzamento con rotazione specifica
   cancelvl: 5
 
-NoSlowA:
+NoSlow:
   # Limite per rilevare l'uso scorretto dell'oggetto
   threshold: 0.001
   # Livello di violazione per l'uso scorretto dell'oggetto
@@ -124,10 +127,6 @@ TimerVehicle:
   # Livello di violazione per il timer dei veicoli
   setbackvl: 10
 
-EntityControl:
-  # Livello di violazione per il controllo entità
-  setbackvl: 25
-
 Reach:
   # Limite per rilevare un attacco oltre la distanza massima
   threshold: 0.0005
@@ -149,6 +148,9 @@ debug-pipeline-on-join: false
 
 # Enables experimental checks
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim sometimes cancels illegal packets such as with timer, after X packets in a second cancelled, when should
 # we simply kick the player? This is required as some packet limiters don't count packets cancelled by grim.

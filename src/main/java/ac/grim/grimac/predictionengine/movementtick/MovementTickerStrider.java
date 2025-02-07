@@ -40,10 +40,10 @@ public class MovementTickerStrider extends MovementTickerRideable {
     public void livingEntityAIStep() {
         super.livingEntityAIStep();
 
-        StateType posMaterial = player.compensatedWorld.getStateTypeAt(player.x, player.y, player.z);
+        StateType posMaterial = player.compensatedWorld.getBlockType(player.x, player.y, player.z);
         StateType belowMaterial = BlockProperties.getOnPos(player, player.mainSupportingBlockData, new Vector3d(player.x, player.y, player.z));
 
-        final PacketEntityStrider strider = (PacketEntityStrider) player.compensatedEntities.getSelf().getRiding();
+        final PacketEntityStrider strider = (PacketEntityStrider) player.compensatedEntities.self.getRiding();
         strider.isShaking = !BlockTags.STRIDER_WARM_BLOCKS.contains(posMaterial) &&
                         !BlockTags.STRIDER_WARM_BLOCKS.contains(belowMaterial) &&
                         !player.wasTouchingLava;
@@ -54,14 +54,14 @@ public class MovementTickerStrider extends MovementTickerRideable {
 
     @Override
     public float getSteeringSpeed() {
-        PacketEntityStrider strider = (PacketEntityStrider) player.compensatedEntities.getSelf().getRiding();
+        PacketEntityStrider strider = (PacketEntityStrider) player.compensatedEntities.self.getRiding();
         // Unsure which version the speed changed in
         final boolean newSpeed = player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20);
         final float coldSpeed = newSpeed ? 0.35F : 0.23F;
 
         // Client desyncs the attribute
         // Again I don't know when this was changed, or whether it always existed, so I will just put it behind 1.20+
-        final ValuedAttribute movementSpeedAttr = strider.getAttribute(Attributes.MOVEMENT_SPEED).get();
+        final ValuedAttribute movementSpeedAttr = strider.getAttribute(Attributes.MOVEMENT_SPEED).orElseThrow();
         float updatedMovementSpeed = (float) movementSpeedAttr.get();
         if (newSpeed) {
             final WrapperPlayServerUpdateAttributes.Property lastProperty = movementSpeedAttr.property().orElse(null);

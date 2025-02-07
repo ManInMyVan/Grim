@@ -1,6 +1,6 @@
 # GrimAC main configuration
 # Source code: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside and contributors, Licensed under GPLv3.
+# Copyright 2025 DefineOutside and contributors, Licensed under GPLv3.
 # Modified binaries, or plugins with copied grim code, must be private,
 # or with full source code available to buyers at no additional cost.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # This means it won't broadcast their brand to operators if the brand matches the following regexes
   ignored-clients:
@@ -25,6 +27,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Hide all spectators with the grim.spectator permission regardless if they are actually actively spectating
@@ -87,7 +90,7 @@ RotationPlace:
 # Prediction-based no slow check
 # Grim accounts for buggy netcode here... hard to false even when spamming right click and offhand button
 # Much more stable than other anticheats, but please report any falses... I have fixed a ton of netcode issues here.
-NoSlowA:
+NoSlow:
   # How much of an offset is "cheating"
   # By default this is lower than other offs
   # Flags by 0.03-0.2 consistently with NoSlow on
@@ -135,9 +138,6 @@ TimerVehicle:
   # Target 1.005 timer
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # How much should we expand hitboxes by? 0.0005 should detect 3.0005+ reach
   #
@@ -172,6 +172,9 @@ debug-pipeline-on-join: false
 
 # Enables experimental checks
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim sometimes cancels illegal packets such as with timer, after X packets in a second cancelled, when should
 # we simply kick the player? This is required as some packet limiters don't count packets cancelled by grim.

@@ -1,6 +1,6 @@
 # GrimAC Hauptkonfiguration
 # Quellcode: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside und Mitwirkende, lizenziert unter GPLv3.
+# Copyright 2025 DefineOutside und Mitwirkende, lizenziert unter GPLv3.
 # Modifizierte Binärdateien, oder Plugins mit kopiertem Grim-Code, müssen privat sein,
 # oder mit vollständigem Quellcode für Käufer ohne zusätzliche Kosten verfügbar sein.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Das bedeutet, dass die Marke nicht an die Betreiber weitergegeben wird, wenn die Marke mit den folgenden Regexes übereinstimmt
   ignored-clients:
@@ -25,6 +27,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Alle Zuschauer mit der Berechtigung grim.spectator ausblenden, unabhängig davon, ob sie tatsächlich aktiv zuschauen
@@ -87,7 +90,7 @@ RotationPlace:
 # Prediction-based no slow check
 # Grim ist verantwortlich für den fehlerhaften Netcode hier... schwer zu falsen, selbst wenn man Rechtsklick und Offhand-Taste spammt.
 # Viel stabiler als andere Anticheats, aber bitte melde alle Falses... Ich habe hier eine Menge Netcode-Probleme behoben.
-NoSlowA:
+NoSlow:
   # Wie viel von einem Offset ist "schummeln"
   # Standardmäßig ist dieser Wert niedriger als andere Offs.
   # Flags um 0,03-0,2 konsequent mit NoSlow on
@@ -135,7 +138,7 @@ TimerVehicle:
   # Ziel 1,005 Timer
   setbackvl: 10
 
-EntityControl:
+VehicleC:
   setbackvl: 25
 
 Reach:
@@ -169,6 +172,9 @@ debug-pipeline-on-join: false
 
 # Aktiviert experimentelle Prüfungen
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim bricht manchmal illegale Pakete ab, z.B. mit Timer, nachdem X Pakete in einer Sekunde abgebrochen wurden, wann sollte
 # wir den Spieler einfach kicken? Dies ist erforderlich, da einige Paketbegrenzer die von Grim abgebrochenen Pakete nicht zählen.

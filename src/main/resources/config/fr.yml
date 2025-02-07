@@ -1,6 +1,6 @@
 # Configuration principale de GrimAC
 # Code source : https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside et contributeurs, sous licence GPLv3.
+# Copyright 2025 DefineOutside et contributeurs, sous licence GPLv3.
 # Les binaires modifiés, ou les plugins contenant du code grim copié, doivent être privés,
 # ou avec le code source complet disponible pour les acheteurs sans frais supplémentaires.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Cela signifie qu'il n'enverra pas la nature du client aux opérateurs si il correspond aux clients suivants
   ignored-clients:
@@ -25,6 +27,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Masquer tout les spectateurs ayant la permission grim.spectator, peu importe s'ils sont actuellement en train d'observer.
@@ -87,7 +90,7 @@ RotationPlace:
 # Vérification de no-slow basée sur la prédiction.
 # Grim tient compte des problèmes de netcode ici... difficile à tromper même en spamant le clic droit et le bouton de la main secondaire.
 # Bien plus stable que les autres anti-triche, mais veuillez signaler toute fausse détection... J'ai corrigé de nombreux problèmes de netcode ici.
-NoSlowA:
+NoSlow:
   # Quel est le niveau d'écart considéré comme "triche"
   # Par défaut, cela est inférieur à d'autres écarts.
   # Génère des avertissements avec des valeurs comprises entre 0,03 et 0,2 lors de l'utilisation de NoSlow
@@ -136,9 +139,6 @@ TimerVehicle:
   # Cibler un chronomètre de 1,005.
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # De combien devrions-nous agrandir les hitboxes ? Une augmentation de 0,0005 devrait détecter une portée de 3,0005 ou plus.
   # 
@@ -168,6 +168,9 @@ debug-pipeline-on-join: false
 
 # Active les vérifications expérimentales
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim annule parfois des paquets illégaux, comme ceux liés au chronomètre, après avoir annulé X paquets en une seconde,
 # à partir de combien de paquets annulés devrions-nous simplement expulser le joueur ?

@@ -62,7 +62,7 @@ public enum CollisionData {
     }, StateTypes.VINE, StateTypes.FIRE),
 
     LAVA((player, version, block, x, y, z) -> {
-        if (MovementTickerStrider.isAbove(player) && player.compensatedEntities.getSelf().getRiding() instanceof PacketEntityStrider) {
+        if (MovementTickerStrider.isAbove(player) && player.compensatedEntities.self.getRiding() instanceof PacketEntityStrider) {
             if (block.getLevel() == 0) {
                 return new HexCollisionBox(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
             }
@@ -543,17 +543,17 @@ public enum CollisionData {
     FENCE(new DynamicCollisionFence(), BlockTags.FENCES.getStates().toArray(new StateType[0])),
 
     SNOW((player, version, data, x, y, z) -> {
-        if (data.getLayers() == 1 && version.isNewerThanOrEquals(ClientVersion.V_1_13)) {
-            // Handle viaversion mapping
-            if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_13) && ViaVersionUtil.isAvailable() && Via.getConfig().isSnowCollisionFix()) {
-                data = data.clone();
-                data.setLayers(2);
-            } else {
+        int layers = data.getLayers();
+        if (layers == 1 && version.isNewerThanOrEquals(ClientVersion.V_1_13)) {
+            if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_13)
+                    || !ViaVersionUtil.isAvailable() || !Via.getConfig().isSnowCollisionFix()) {
                 return NoCollisionBox.INSTANCE;
             }
+
+            layers++;
         }
 
-        return new SimpleCollisionBox(0, 0, 0, 1, (data.getLayers() - 1) * 0.125, 1);
+        return new SimpleCollisionBox(0, 0, 0, 1, (layers - 1) * 0.125, 1);
     }, StateTypes.SNOW),
 
     STAIR(new DynamicStair(), BlockTags.STAIRS.getStates().toArray(new StateType[0])),
@@ -633,7 +633,7 @@ public enum CollisionData {
 
     LILYPAD((player, version, data, x, y, z) -> {
         // Boats break lilypads client sided on 1.12- clients.
-        if (player.compensatedEntities.getSelf().getRiding() != null && player.compensatedEntities.getSelf().getRiding().isBoat() && version.isOlderThanOrEquals(ClientVersion.V_1_12_2))
+        if (player.inVehicle() && player.compensatedEntities.self.getRiding().isBoat() && version.isOlderThanOrEquals(ClientVersion.V_1_12_2))
             return NoCollisionBox.INSTANCE;
 
         if (version.isOlderThan(ClientVersion.V_1_9))
@@ -927,7 +927,7 @@ public enum CollisionData {
         }
 
         ItemStack boots = player.getInventory().getBoots();
-        if (player.lastY > y + 1 - 1e-5 && boots != null && boots.getType() == ItemTypes.LEATHER_BOOTS && !player.isSneaking && !player.compensatedEntities.getSelf().inVehicle())
+        if (player.lastY > y + 1 - 1e-5 && boots != null && boots.getType() == ItemTypes.LEATHER_BOOTS && !player.isSneaking && !player.inVehicle())
             return new SimpleCollisionBox(0, 0, 0, 1, 1, 1, true);
 
         return NoCollisionBox.INSTANCE;

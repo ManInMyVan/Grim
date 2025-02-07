@@ -1,4 +1,4 @@
-package ac.grim.grimac.checks.impl.badpackets;
+package ac.grim.grimac.checks.impl.breaking;
 
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.CheckData;
@@ -14,9 +14,9 @@ import com.github.retrooper.packetevents.util.Vector3i;
 
 import static ac.grim.grimac.utils.nmsutil.BlockBreakSpeed.getBlockDamage;
 
-@CheckData(name = "BadPacketsZ")
-public class BadPacketsZ extends Check implements BlockBreakCheck {
-    public BadPacketsZ(final GrimPlayer player) {
+@CheckData(name = "WrongBreak")
+public class WrongBreak extends Check implements BlockBreakCheck {
+    public WrongBreak(final GrimPlayer player) {
         super(player);
     }
 
@@ -52,14 +52,7 @@ public class BadPacketsZ extends Check implements BlockBreakCheck {
         if (blockBreak.action == DiggingAction.CANCELLED_DIGGING) {
             final Vector3i pos = blockBreak.position;
 
-            if (shouldExempt(pos)) {
-                lastCancelledBlock = pos;
-                lastLastBlock = null;
-                lastBlock = null;
-                return;
-            }
-
-            if (!pos.equals(lastBlock)) {
+            if (!shouldExempt(pos) && !pos.equals(lastBlock)) {
                 // https://github.com/GrimAnticheat/Grim/issues/1512
                 if (player.getClientVersion().isOlderThan(ClientVersion.V_1_14_4) || (!lastBlockWasInstantBreak && pos.equals(lastCancelledBlock))) {
                     if (flagAndAlert("action=CANCELLED_DIGGING" + ", last=" + MessageUtil.toUnlabledString(lastBlock) + ", pos=" + MessageUtil.toUnlabledString(pos))) {
@@ -88,10 +81,9 @@ public class BadPacketsZ extends Check implements BlockBreakCheck {
                 }
             }
 
-            lastCancelledBlock = null;
-
             // 1.14.4+ clients don't send another start break in protected regions
             if (player.getClientVersion().isOlderThan(ClientVersion.V_1_14_4)) {
+                lastCancelledBlock = null;
                 lastLastBlock = null;
                 lastBlock = null;
             }

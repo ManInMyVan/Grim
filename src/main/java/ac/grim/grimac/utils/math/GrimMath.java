@@ -7,7 +7,7 @@ import java.util.List;
 @UtilityClass
 public class GrimMath {
     public static final double MINIMUM_DIVISOR = ((Math.pow(0.2f, 3) * 8) * 0.15) - 1e-3; // 1e-3 for float imprecision
-
+    private static final float DEGREES_TO_RADIANS = (float) Math.PI / 180f;
 
     public static double gcd(double a, double b) {
         if (a == 0) return 0;
@@ -60,7 +60,14 @@ public class GrimMath {
         return Math.min(num, max);
     }
 
-    public static float clampFloat(float num, float min, float max) {
+    public static int clamp(int num, int min, int max) {
+        if (num < min) {
+            return min;
+        }
+        return Math.min(num, max);
+    }
+
+    public static float clamp(float num, float min, float max) {
         if (num < min) {
             return min;
         }
@@ -102,13 +109,21 @@ public class GrimMath {
         return value >= min && value <= max;
     }
 
+    public static boolean inRange(int value, int min, int max) {
+        return value >= min && value <= max;
+    }
+
     public static boolean isNearlySame(double a, double b, double epoch) {
         return Math.abs(a-b) < epoch;
     }
 
     public static long hashCode(double x, int y, double z) {
-        long l = (long)(x * 3129871) ^ (long)z * 116129781L ^ (long)y;
+        long l = (long) (x * 3129871) ^ (long) z * 116129781L ^ (long) y;
         l = l * l * 42317861L + l * 11L;
         return l >> 16;
+    }
+
+    public static float radians(float degrees) {
+        return degrees * DEGREES_TO_RADIANS;
     }
 }

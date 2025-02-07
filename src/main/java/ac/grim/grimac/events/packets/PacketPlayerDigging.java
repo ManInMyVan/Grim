@@ -1,7 +1,7 @@
 package ac.grim.grimac.events.packets;
 
 import ac.grim.grimac.GrimAPI;
-import ac.grim.grimac.checks.impl.movement.NoSlowA;
+import ac.grim.grimac.checks.impl.movement.NoSlow;
 import ac.grim.grimac.player.GrimPlayer;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
@@ -177,7 +177,7 @@ public class PacketPlayerDigging extends PacketListenerAbstract {
                         && player.packetStateData.getSlowedByUsingItemSlot() != player.packetStateData.lastSlotSelected
                         || player.getInventory().getItemInHand(player.packetStateData.eatingHand).isEmpty()) {
                     player.packetStateData.setSlowedByUsingItem(false);
-                    player.checkManager.getPostPredictionCheck(NoSlowA.class).didSlotChangeLastTick = true;
+                    player.checkManager.getPostPredictionCheck(NoSlow.class).didSlotChangeLastTick = true;
                 }
             }
         }
@@ -191,6 +191,7 @@ public class PacketPlayerDigging extends PacketListenerAbstract {
             final GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
             if (player == null) return;
 
+            // do we need to do this with block breaks too?
             // Prevent issues if the player switches slots, while lagging, standing still, and is placing blocks
             CheckManagerListener.handleQueuedPlaces(player, false, 0, 0, System.currentTimeMillis());
 

@@ -22,7 +22,7 @@ import java.util.Set;
 public final class PredictionEngineRideableUtils {
 
     public static Set<VectorData> handleJumps(GrimPlayer player, Set<VectorData> possibleVectors) {
-        if (!(player.compensatedEntities.getSelf().getRiding() instanceof PacketEntityHorse horse)) return possibleVectors;
+        if (!(player.compensatedEntities.self.getRiding() instanceof PacketEntityHorse horse)) return possibleVectors;
 
         if (horse instanceof PacketEntityCamel camel) {
             handleCamelDash(player, possibleVectors, camel);

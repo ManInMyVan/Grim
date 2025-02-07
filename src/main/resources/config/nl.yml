@@ -1,6 +1,6 @@
 # GrimAC configuratie
 # Broncode: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside en bijdragers, gelicentieerd onder GPLv3.
+# Copyright 2025 DefineOutside en bijdragers, gelicentieerd onder GPLv3.
 # Gewijzigde binaire bestanden, of plugins met gekopieerde Grim code, moeten privé zijn,
 # of met volledige broncode beschikbaar voor kopers zonder extra kosten.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Dit betekent dat het merk niet wordt uitgezonden naar operators als het merk overeenkomt met de volgende regexen
   ignored-clients:
@@ -25,6 +27,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Verberg alle toeschouwers met de grim.spectator-toestemming, ongeacht of ze daadwerkelijk actief toeschouwer zijn
@@ -87,7 +90,7 @@ RotationPlace:
 # Op voorspelling gebaseerde NoSlow-controle
 # Grim is verantwoordelijk voor buggy netcode hier... moeilijk om vals te spelen, zelfs als je met rechts klikt en de offhand-knop spamt
 # Veel stabieler dan andere anticheats, maar rapporteer alsjeblieft alle falses... Ik heb hier een heleboel netcode-problemen opgelost.
-NoSlowA:
+NoSlow:
   # Hoeveel van een offset is "valsspelen"?
   # Standaard is dit lager dan andere offs
   # Flaggen met 0.03-0.2 consequent met NoSlow aan
@@ -135,9 +138,6 @@ TimerVehicle:
   # Doel 1.005 timer
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # Met hoeveel moeten we hitboxes uitbreiden? 0.0005 moet 3.0005+ bereik detecteren
   #
@@ -172,6 +172,9 @@ debug-pipeline-on-join: false
 
 # Experimentele controles inschakelen
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim annuleert soms illegale pakketten zoals met timer, na X pakketten in een seconde geannuleerd, wanneer moeten
 # we de speler gewoon schoppen? Dit is nodig omdat sommige pakket-begrenzers pakketten die door grim worden geannuleerd niet tellen

@@ -1,6 +1,6 @@
 # La configuración principal de GrimAC
 # Código fuente: https://github.com/MWHunter/Grim
-# Copyright 2024 DefineOutside y contribuyentes, licenciado bajo GPLv3.
+# Copyright 2025 DefineOutside y contribuyentes, licenciado bajo GPLv3.
 # Binarios modificados o plugins con código de Grim deben ser privados o con
 # el código fuente disponible para todos los compradores sin costo adicional.
 
@@ -18,6 +18,8 @@ alerts:
 verbose:
   print-to-console: false
 
+check-for-updates: true
+
 client-brand:
   # Esto quiere decir que no se va a anunciar la marca del cliente si esta cumple alguno de los siguientes regexes:
   ignored-clients:
@@ -25,6 +27,7 @@ client-brand:
     - "^fabric$"
     - "^lunarclient:v\\d+\\.\\d+\\.\\d+-\\d{4}$"
     - "^Feather Fabric$"
+    - "^labymod$"
 
 spectators:
   # Ocultar todos los espectadores con el permiso grim.spectator sin importar si realmente están espectando
@@ -90,7 +93,7 @@ RotationPlace:
 # clic derecho y la mano secundaria.
 # Mucho mas estable que otros anti-cheats, pero por favor reportar todo falso positivo... he arreglado muchos
 # problemas del código de red aquí.
-NoSlowA:
+NoSlow:
   # ¿Cuánta debería ser la compensacion como para que se considere trampa?
   # Por defecto esto es más bajo que otras compensaciones
   # Marca por 0.03-0.2 consistentemente con NoSlow activado
@@ -140,9 +143,6 @@ TimerVehicle:
   # Target 1.005 timer
   setbackvl: 10
 
-EntityControl:
-  setbackvl: 25
-
 Reach:
   # Cuanto deberíamos expandir las hit-boxes? 0.0005 debería detectar un reach de 3.0005+
   #
@@ -173,6 +173,9 @@ debug-pipeline-on-join: false
 
 # Habilitar comprobaciones experimentales
 experimental-checks: false
+
+mitigate-autoblock: true
+mitigate-desync-noslow: true
 
 # Grim a veces cancela paquetes ilegal como los de Timer. Después de X paquetes en un solo segundo cancelados,
 # cuando deberíamos simplemente expulsar al jugador? Esto es obligatorio ya que algunos limitadores de paquetes

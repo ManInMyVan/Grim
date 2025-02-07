@@ -18,7 +18,7 @@ public class JumpPower {
             jumpPower += 0.1f * (jumpBoost.getAsInt() + 1);
         }
 
-        if (player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5) && jumpPower <= 1.0E-5F) return;
+        if (player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_20_5) && jumpPower <= 1.0E-5f) return;
 
         vector.setY(player.getClientVersion().isOlderThan(ClientVersion.V_1_21_2) ? jumpPower : Math.max(jumpPower, vector.getY()));
 
@@ -29,7 +29,7 @@ public class JumpPower {
     }
 
     public static float getJumpPower(GrimPlayer player) {
-        return (float) player.compensatedEntities.getSelf().getAttributeValue(Attributes.JUMP_STRENGTH) * getPlayerJumpFactor(player);
+        return (float) player.compensatedEntities.self.getAttributeValue(Attributes.JUMP_STRENGTH) * getPlayerJumpFactor(player);
     }
 
     public static float getPlayerJumpFactor(GrimPlayer player) {
