@@ -30,6 +30,8 @@ import java.util.function.Function;
 public class PacketLogger extends Check implements PacketCheck {
     private static final Map<PacketTypeCommon, PacketWriter<PacketReceiveEvent>> vals_c = new HashMap<>();
     private static final Map<PacketTypeCommon, PacketWriter<PacketSendEvent>> vals_s = new HashMap<>();
+    private static final boolean LOG_SENT = false;
+    private static final boolean LOG_RECEIVED = true;
     private static final File dir = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder().getPath() + "\\packetlog");
     private long last = -1;
     private final File file = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder().getPath() + "\\packetlog\\" + player.getName() + ".txt");
@@ -40,12 +42,16 @@ public class PacketLogger extends Check implements PacketCheck {
 
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
-        log(event, vals_c.get(event.getPacketType()), new StringBuilder("(Receive) "));
+        if (LOG_RECEIVED) {
+            log(event, vals_c.get(event.getPacketType()), new StringBuilder("(Receive) "));
+        }
     }
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
-        log(event, vals_s.get(event.getPacketType()), new StringBuilder("(Send) "));
+        if (LOG_SENT) {
+            log(event, vals_s.get(event.getPacketType()), new StringBuilder("(Send) "));
+        }
     }
 
     private <E extends ProtocolPacketEvent> void log(E event, PacketWriter<E> writer, StringBuilder message) {
