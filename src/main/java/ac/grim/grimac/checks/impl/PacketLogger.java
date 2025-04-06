@@ -4,12 +4,14 @@ import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.checks.Check;
 import ac.grim.grimac.checks.type.PacketCheck;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.anticheat.MessageUtil;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.common.client.WrapperCommonClientSettings;
 import com.github.retrooper.packetevents.wrapper.play.client.*;
@@ -199,11 +201,42 @@ public class PacketLogger extends Check implements PacketCheck {
                 }
             }
         });
+        vals_c.put(PacketType.Play.Client.TAB_COMPLETE, (event, fields) -> {
+            WrapperPlayClientTabComplete wrapper = new WrapperPlayClientTabComplete(event);
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_13)) {
+                fields.put("transactionId", wrapper.getTransactionId().orElseThrow());
+                fields.put("text", wrapper.getText());
+            } else {
+                fields.put("text", wrapper.getText());
+                if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
+                    fields.put("assumeCommand", wrapper.isAssumeCommand());
+                }
+                fields.put("blockPosition", wrapper.getBlockPosition().orElse(null));
+            }
+        });
+        vals_c.put(PacketType.Play.Client.WINDOW_CONFIRMATION, (event, fields) -> {
+            WrapperPlayClientWindowConfirmation wrapper = new WrapperPlayClientWindowConfirmation(event);
+            fields.put("windowId", wrapper.getWindowId());
+            fields.put("actionId", wrapper.getActionId());
+            fields.put("accepted", wrapper.isAccepted());
+        });
+        vals_c.put(PacketType.Play.Client.CLICK_WINDOW_BUTTON, (event, fields) -> {
+            WrapperPlayClientClickWindowButton wrapper = new WrapperPlayClientClickWindowButton(event);
+            fields.put("windowId", wrapper.getWindowId());
+            fields.put("buttonId", wrapper.getButtonId());
+        });
+        vals_c.put(PacketType.Play.Client.CLICK_WINDOW, (event, fields) -> {
+            WrapperPlayClientClickWindow wrapper = new WrapperPlayClientClickWindow(event);
+            fields.put("windowId", wrapper.getWindowId());
+            wrapper.getStateId().ifPresent(stateId -> fields.put("stateId", stateId));
+            fields.put("slot", wrapper.getSlot());
+            fields.put("button", wrapper.getButton());
+            wrapper.getActionNumber().ifPresent(actionNumber -> fields.put("actionNumber", actionNumber));
+            fields.put("clickType", wrapper.getWindowClickType());
+            wrapper.getSlots().ifPresent(slots -> fields.put("slots", slots));
+            fields.put("stack", wrapper.getCarriedItemStack());
+        });
 
-        vals_c.put(PacketType.Play.Client.TAB_COMPLETE, fields(WrapperPlayClientTabComplete::new));
-        vals_c.put(PacketType.Play.Client.WINDOW_CONFIRMATION, fields(WrapperPlayClientWindowConfirmation::new));
-        vals_c.put(PacketType.Play.Client.CLICK_WINDOW_BUTTON, fields(WrapperPlayClientClickWindowButton::new));
-        vals_c.put(PacketType.Play.Client.CLICK_WINDOW, fields(WrapperPlayClientClickWindow::new));
         vals_c.put(PacketType.Play.Client.PLAYER_DIGGING, fields(WrapperPlayClientPlayerDigging::new, (name, wrapper) -> name.equals("sequence") && wrapper.getServerVersion().isOlderThan(ServerVersion.V_1_19) || name.equals("blockFaceId")));
         vals_c.put(PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT, fields(WrapperPlayClientPlayerBlockPlacement::new, (name, wrapper) -> name.equals("faceId")));
         vals_c.put(PacketType.Play.Client.CHAT_PREVIEW, fields(WrapperPlayClientChatPreview::new));
@@ -312,12 +345,49 @@ public class PacketLogger extends Check implements PacketCheck {
         vals_s.put(PacketType.Play.Server.PING, fields(WrapperPlayServerPing::new));
         vals_s.put(PacketType.Play.Server.CRAFT_RECIPE_RESPONSE, fields(WrapperPlayServerCraftRecipeResponse::new));
         vals_s.put(PacketType.Play.Server.PLAYER_ABILITIES, fields(WrapperPlayServerPlayerAbilities::new));
+        vals_s.put(PacketType.Play.Server.END_COMBAT_EVENT, (event, fields) -> {
+            WrapperPlayServerEndCombatEvent wrapper = new WrapperPlayServerEndCombatEvent(event);
+            fields.put("duration", wrapper.getDuration());
+            wrapper.getEntityId().ifPresent(entityId -> fields.put("entityId", entityId));
+        });
+        vals_s.put(PacketType.Play.Server.ENTER_COMBAT_EVENT, null);
+        vals_s.put(PacketType.Play.Server.DEATH_COMBAT_EVENT, (event, fields) -> {
+            WrapperPlayServerDeathCombatEvent wrapper = new WrapperPlayServerDeathCombatEvent(event);
+            fields.put("playerId", wrapper.getPlayerId());
+            wrapper.getEntityId().ifPresent(entityId -> fields.put("entityId", entityId));
+            fields.put("deathMessage", wrapper.getDeathMessage());
+        });
+        vals_s.put(PacketType.Play.Server.FACE_PLAYER, (event, fields) -> {
+            WrapperPlayServerFacePlayer wrapper = new WrapperPlayServerFacePlayer(event);
+            fields.put("aimUnit", wrapper.getAimUnit());
+            Vector3d targetPosition = wrapper.getTargetPosition();
+            fields.put("x", targetPosition.x);
+            fields.put("y", targetPosition.y);
+            fields.put("z", targetPosition.z);
+            WrapperPlayServerFacePlayer.TargetEntity targetEntity = wrapper.getTargetEntity();
+            fields.put("targetEntity", targetEntity == null ? null : "{entityId=" + targetEntity.getEntityId() + ", entitySection=" + targetEntity.getEntitySection() + "}");
+        });
+        vals_s.put(PacketType.Play.Server.PLAYER_POSITION_AND_LOOK, (event, fields) -> {
+            WrapperPlayServerPlayerPositionAndLook wrapper = new WrapperPlayServerPlayerPositionAndLook(event);
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
+                fields.put("teleportId", wrapper.getTeleportId());
+            }
+
+            fields.put("position", MessageUtil.toUnlabledString(wrapper.getPosition()));
+            fields.put("yaw", wrapper.getYaw());
+            fields.put("pitch", wrapper.getPitch());
+
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_2)) {
+                fields.put("velocity", MessageUtil.toUnlabledString(wrapper.getDeltaMovement()));
+            }
+
+            fields.put("flags", wrapper.getRelativeFlags().getFullMask());
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_17)
+                    && wrapper.getServerVersion().isOlderThanOrEquals(ServerVersion.V_1_19_3)) {
+                fields.put("dismountVehicle", wrapper.isDismountVehicle());
+            }
+        });
         /* TODO:
-                END_COMBAT_EVENT,
-                ENTER_COMBAT_EVENT,
-                DEATH_COMBAT_EVENT,
-                FACE_PLAYER,
-                PLAYER_POSITION_AND_LOOK,
                 UNLOCK_RECIPES,
                 DESTROY_ENTITIES,
                 REMOVE_ENTITY_EFFECT,

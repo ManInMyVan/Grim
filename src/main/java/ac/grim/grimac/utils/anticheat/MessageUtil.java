@@ -2,6 +2,7 @@ package ac.grim.grimac.utils.anticheat;
 
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.player.GrimPlayer;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.util.reflection.Reflection;
@@ -27,6 +28,10 @@ public class MessageUtil {
     public final boolean hasPlaceholderAPI = Reflection.getClassByNameWithoutException("me.clip.placeholderapi.PlaceholderAPI") != null;
 
     public @NotNull String toUnlabledString(@Nullable Vector3i vec) {
+        return vec == null ? "null" : vec.x + ", " + vec.y + ", " + vec.z;
+    }
+
+    public @NotNull String toUnlabledString(@Nullable Vector3d vec) {
         return vec == null ? "null" : vec.x + ", " + vec.y + ", " + vec.z;
     }
 
