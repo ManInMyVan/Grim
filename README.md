@@ -8,12 +8,12 @@ This project is considered feature complete for the 2.0 (open-source) branch of 
 - [Modrinth](https://modrinth.com/plugin/grimac)
 - [Hangar](https://hangar.papermc.io/GrimAnticheat/GrimAnticheat)
 - [SpigotMC](https://www.spigotmc.org/resources/grim-anticheat.99923/)
-- *For bleeding edge builds use* [Github artifacts](https://nightly.link/GrimAnticheat/Grim/workflows/gradle-publish/2.0/artifact.zip)
+- *For bleeding edge builds use GitHub artifacts*: [Bukkit](https://nightly.link/GrimAnticheat/Grim/workflows/gradle-publish/2.0/grimac-bukkit.zip), [Fabric](https://nightly.link/GrimAnticheat/Grim/workflows/gradle-publish/2.0/grimac-fabric.zip)
 
 ## Installation notes
 > [!WARNING]
 > Java 17 is now required. More information [here](https://github.com/GrimAnticheat/Grim/wiki/Updating-to-Java-17).
-- Paper, Spigot, and Folia are currently supported.
+- Paper, Spigot, Folia, and Fabric are currently supported.
 - If you use Geyser, place Floodgate on the backend server so grim can exempt bedrock players. Grim cannot access the Floodgate API if it is on the proxy.
 - If you use ViaVersion, it should be on the backend server as movement is highly dependent on client version.
 
@@ -32,7 +32,7 @@ Grim's API allows you to integrate Grim into your own plugins.
 1. `git clone https://github.com/GrimAnticheat/Grim.git`
 2. `cd Grim`
 3. `./gradlew build`
-4. The final jar will compile into the build/libs folder
+4. The final jars will compile into the `<platform>/build/libs` folders
 
 ## Grim supremacy
 
@@ -41,8 +41,8 @@ What makes Grim stand out against other anticheats?
 ### Movement Simulation Engine
 
 * We have a 1:1 replication of the player's possible movements
-* This covers everything from basic walking, swimming, knockback, cobwebs, to bubble columns
-* It even covers riding entities from boats to pigs to striders
+    * This covers everything from basic walking, swimming, knockback, cobwebs, to bubble columns
+    * It even covers riding entities from boats to pigs to striders
 * Built upon covering edge cases to confirm accuracy
 * 1.13+ clients on 1.13+ servers, 1.12- clients on 1.13+ servers, 1.13+ clients on 1.12- servers, and 1.12- clients on 1.12- servers are all supported regardless of the large technical changes between these versions.
 * The order of collisions depends on the client version and is correct

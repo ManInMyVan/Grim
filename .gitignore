@@ -19,6 +19,7 @@ build/
 .gradletasknamecache
 gradle-app.setting
 !gradle-wrapper.jar
+buildSrc/.kotlin
 
 ##############################
 ## IntelliJ
@@ -66,3 +67,9 @@ nb-configuration.xml
 ## OS X
 ##############################
 .DS_Store
+
+##############################
+## Fabric
+##############################
+run/
+fabric/run/
