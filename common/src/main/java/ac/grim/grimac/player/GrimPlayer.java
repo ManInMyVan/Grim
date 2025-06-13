@@ -232,6 +232,7 @@ public class GrimPlayer implements GrimUser {
     public int maxAttackSlow = 0;
     public GameMode gamemode;
     public DimensionType dimensionType;
+    public @Nullable String worldName;
     public Vector3d bedPosition;
     public long lastBlockPlaceUseItem = 0;
     public long lastBlockBreak = 0;
@@ -436,7 +437,7 @@ public class GrimPlayer implements GrimUser {
         final PacketEntity riding = self.getRiding();
         if (riding == null) return (float) self.getAttributeValue(Attributes.STEP_HEIGHT);
 
-        if (riding.isBoat()) {
+        if (riding.isBoat) {
             return 0f;
         }
 
@@ -655,7 +656,7 @@ public class GrimPlayer implements GrimUser {
     @Override
     public int getKeepAlivePing() {
         if (platformPlayer == null) return -1;
-        return PacketEvents.getAPI().getPlayerManager().getPing(platformPlayer);
+        return PacketEvents.getAPI().getPlayerManager().getPing(platformPlayer.getNative());
     }
 
     public SetbackTeleportUtil getSetbackTeleportUtil() {
@@ -739,7 +740,7 @@ public class GrimPlayer implements GrimUser {
         if (getClientVersion().isOlderThan(ClientVersion.V_1_21_2)
                 || PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_21_2)) {
             final ItemStack chestPlate = getInventory().getChestplate();
-            return chestPlate.getType() == ItemTypes.ELYTRA && chestPlate.getDamageValue() < chestPlate.getMaxDamage();
+            return chestPlate.getType() == ItemTypes.ELYTRA && chestPlate.getDamageValue() < chestPlate.getMaxDamage() - 1;
         }
 
         final CompensatedInventory inventory = getInventory();
@@ -752,7 +753,7 @@ public class GrimPlayer implements GrimUser {
     }
 
     private static boolean isGlider(ItemStack stack, EquipmentSlot slot) {
-        if (!stack.hasComponent(ComponentTypes.GLIDER) || stack.getDamageValue() >= stack.getMaxDamage()) {
+        if (!stack.hasComponent(ComponentTypes.GLIDER) || stack.getDamageValue() >= (stack.getMaxDamage() - 1)) {
             return false;
         }
 
@@ -769,7 +770,7 @@ public class GrimPlayer implements GrimUser {
     public boolean canUseGameMasterBlocks() {
         // This check was added in 1.11
         // 1.11+ players must be in creative and have a permission level at or above 2
-        return getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_10) || (gamemode == GameMode.CREATIVE && compensatedEntities.self.getOpLevel() >= 2);
+        return getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_10) || (gamemode == GameMode.CREATIVE && compensatedEntities.self.opLevel >= 2);
     }
 
     @Contract(pure = true)

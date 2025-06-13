@@ -5,7 +5,9 @@ import ac.grim.grimac.checks.impl.badpackets.BadPacketsE;
 import ac.grim.grimac.checks.impl.badpackets.BadPacketsF;
 import ac.grim.grimac.checks.impl.badpackets.BadPacketsG;
 import ac.grim.grimac.checks.impl.badpackets.BadPacketsH;
+import ac.grim.grimac.checks.impl.elytra.ElytraC;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.data.KnownInput;
 import ac.grim.grimac.utils.data.TrackerData;
 import ac.grim.grimac.utils.data.packetentity.PacketEntitySelf;
 import ac.grim.grimac.utils.enums.Pose;
@@ -116,6 +118,7 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
             player.gamemode = joinGame.getGameMode();
             player.entityID = joinGame.getEntityId();
             player.dimensionType = joinGame.getDimensionType();
+            player.worldName = joinGame.getWorldName();
 
             if (PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_17))
                 return;
@@ -149,6 +152,7 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
                 }
 
                 player.lastOnGround = false;
+                player.clientClaimsLastOnGround = false;
                 player.onGround = false;
                 player.isInBed = false;
                 player.packetStateData.setSlowedByUsingItem(false);
@@ -162,9 +166,9 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
                     player.powderSnowFrozenTicks = 0;
                     player.compensatedEntities.self.hasGravity = true;
                     player.playerEntityHasGravity = true;
-                }
+                    player.packetStateData.knownInput = new KnownInput(false, false, false, false, false, false, false);
+                    player.checkManager.getPostPredictionCheck(ElytraC.class).exempt = true;
 
-                if (!keepTrackedData) {
                     // 1.19.4 uses current sprinting, older versions use last sprinting
                     if (player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_19_4)) {
                         player.isSprinting = false;
@@ -191,6 +195,7 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
                     player.checkManager.getBlockPlaceCheck(BadPacketsH.class).onWorldChange();
                 }
                 player.dimensionType = respawn.getDimensionType();
+                player.worldName = respawn.getWorldName().orElse(null);
 
                 player.compensatedEntities.serverPlayerVehicle = null; // All entities get removed on respawn
                 player.compensatedEntities.self = new PacketEntitySelf(player, player.compensatedEntities.self);
@@ -220,6 +225,10 @@ public class PacketPlayerRespawn extends PacketListenerAbstract {
     }
 
     private boolean isWorldChange(GrimPlayer player, WrapperPlayServerRespawn respawn) {
+        if (player.getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_16) && PacketEvents.getAPI().getServerManager().getVersion().isNewerThan(ServerVersion.V_1_16)) {
+            return !Objects.equals(respawn.getWorldName().orElse(null), player.worldName);
+        }
+
         ClientVersion version = PacketEvents.getAPI().getServerManager().getVersion().toClientVersion();
         return respawn.getDimensionType().getId(version) != player.dimensionType.getId(version)
                 || !Objects.equals(respawn.getDimensionType().getName(), player.dimensionType.getName());

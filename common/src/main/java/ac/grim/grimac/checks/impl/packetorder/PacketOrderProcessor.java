@@ -113,7 +113,7 @@ public final class PacketOrderProcessor extends Check implements PacketCheck {
 
         if (player.gamemode == GameMode.SPECTATOR || isTickPacket(packetType)
                 || player.getClientVersion().isOlderThan(ClientVersion.V_1_21_2)
-                && player.compensatedWorld.isChunkLoaded(GrimMath.floor(player.x) >> 4, GrimMath.floor(player.z) >> 4)) {
+                && !player.compensatedWorld.isChunkLoaded(GrimMath.floor(player.x) >> 4, GrimMath.floor(player.z) >> 4)) {
             openingInventory = false;
             swapping = false;
             dropping = false;
