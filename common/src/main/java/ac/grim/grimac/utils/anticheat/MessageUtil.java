@@ -6,6 +6,7 @@ import ac.grim.grimac.platform.api.player.PlatformPlayer;
 import ac.grim.grimac.platform.api.sender.Sender;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.chat.ChatUtil;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.util.Vector3i;
 import lombok.experimental.UtilityClass;
@@ -30,6 +31,10 @@ public class MessageUtil {
     }
 
     public @NotNull String toUnlabledString(@Nullable Vector3f vec) {
+        return vec == null ? "null" : vec.x + ", " + vec.y + ", " + vec.z;
+    }
+
+    public @NotNull String toUnlabledString(@Nullable Vector3d vec) {
         return vec == null ? "null" : vec.x + ", " + vec.y + ", " + vec.z;
     }
 

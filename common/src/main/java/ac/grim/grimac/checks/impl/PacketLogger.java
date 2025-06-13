@@ -34,9 +34,9 @@ public class PacketLogger extends Check implements PacketCheck {
     private static final Map<PacketTypeCommon, PacketWriter<PacketSendEvent>> vals_s = new HashMap<>();
     private static final boolean LOG_SENT = false;
     private static final boolean LOG_RECEIVED = true;
-    private static final File dir = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder().getPath() + "\\packetlog");
+    private static final File dir = new File(GrimAPI.INSTANCE.getGrimPlugin().getDataFolder().getPath() + "\\packetlog");
     private long last = -1;
-    private final File file = new File(GrimAPI.INSTANCE.getPlugin().getDataFolder().getPath() + "\\packetlog\\" + player.getName() + ".txt");
+    private final File file = new File(GrimAPI.INSTANCE.getGrimPlugin().getDataFolder().getPath() + "\\packetlog\\" + player.getName() + ".txt");
 
     public PacketLogger(GrimPlayer player) {
         super(player);
