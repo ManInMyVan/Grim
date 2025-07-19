@@ -329,7 +329,7 @@ public class PacketLogger extends Check implements PacketCheck {
         vals_s.put(PacketType.Play.Server.OPEN_HORSE_WINDOW, fields(WrapperPlayServerOpenHorseWindow::new));
         vals_s.put(PacketType.Play.Server.INITIALIZE_WORLD_BORDER, fields(WrapperPlayServerInitializeWorldBorder::new));
         vals_s.put(PacketType.Play.Server.KEEP_ALIVE, fields(WrapperPlayServerKeepAlive::new));
-        vals_s.put(PacketType.Play.Server.CHUNK_DATA, fields(WrapperPlayServerChunkData::new));
+//        vals_s.put(PacketType.Play.Server.CHUNK_DATA, fields(WrapperPlayServerChunkData::new));
         vals_s.put(PacketType.Play.Server.PARTICLE, fields(WrapperPlayServerParticle::new));
         vals_s.put(PacketType.Play.Server.UPDATE_LIGHT, fields(WrapperPlayServerUpdateLight::new));
         vals_s.put(PacketType.Play.Server.JOIN_GAME, fields(WrapperPlayServerJoinGame::new));
