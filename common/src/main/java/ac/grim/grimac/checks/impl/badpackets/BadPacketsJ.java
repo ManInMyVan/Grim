@@ -16,7 +16,7 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientUs
 import java.util.ArrayList;
 import java.util.List;
 
-@CheckData(name = "BadPacketsJ", description = "Rotation in use item packet did not match tick rotation", experimental = true)
+@CheckData(name = "BadPacketsJ", description = "Rotation in use item packet did not match tick rotation")
 public class BadPacketsJ extends Check implements PacketCheck {
     private final List<HeadRotation> rotations = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public class BadPacketsJ extends Check implements PacketCheck {
 
         if (isTickPacket(event.getPacketType())) {
             // due to tick skipping, the rotations sent could be last tick's
-            boolean allowLast = player.canSkipTicks() && (event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION || event.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION);
+            boolean allowLast = player.canSkipTicksPreVia() && (event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION || event.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION);
             for (HeadRotation rotation : rotations) {
                 if (rotation.getYaw() == player.xRot && rotation.getPitch() == player.yRot) {
                     allowLast = false;

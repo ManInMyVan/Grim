@@ -7,36 +7,23 @@ import ac.grim.grimac.checks.impl.aim.AimDuplicateLook;
 import ac.grim.grimac.checks.impl.aim.AimModulo360;
 import ac.grim.grimac.checks.impl.aim.processor.AimProcessor;
 import ac.grim.grimac.checks.impl.badpackets.*;
-import ac.grim.grimac.checks.impl.breaking.AirLiquidBreak;
-import ac.grim.grimac.checks.impl.breaking.FarBreak;
-import ac.grim.grimac.checks.impl.breaking.FastBreak;
-import ac.grim.grimac.checks.impl.breaking.InvalidBreak;
-import ac.grim.grimac.checks.impl.breaking.MultiBreak;
-import ac.grim.grimac.checks.impl.breaking.NoSwingBreak;
-import ac.grim.grimac.checks.impl.breaking.PositionBreakA;
-import ac.grim.grimac.checks.impl.breaking.PositionBreakB;
-import ac.grim.grimac.checks.impl.breaking.RotationBreak;
-import ac.grim.grimac.checks.impl.breaking.WrongBreak;
+import ac.grim.grimac.checks.impl.breaking.*;
+import ac.grim.grimac.checks.impl.chat.ChatA;
+import ac.grim.grimac.checks.impl.chat.ChatB;
+import ac.grim.grimac.checks.impl.chat.ChatC;
+import ac.grim.grimac.checks.impl.chat.ChatD;
 import ac.grim.grimac.checks.impl.combat.Hitboxes;
 import ac.grim.grimac.checks.impl.combat.MultiInteractA;
 import ac.grim.grimac.checks.impl.combat.MultiInteractB;
 import ac.grim.grimac.checks.impl.combat.Reach;
 import ac.grim.grimac.checks.impl.crash.*;
-import ac.grim.grimac.checks.impl.elytra.ElytraA;
-import ac.grim.grimac.checks.impl.elytra.ElytraB;
-import ac.grim.grimac.checks.impl.elytra.ElytraC;
-import ac.grim.grimac.checks.impl.elytra.ElytraD;
-import ac.grim.grimac.checks.impl.elytra.ElytraE;
-import ac.grim.grimac.checks.impl.elytra.ElytraF;
-import ac.grim.grimac.checks.impl.elytra.ElytraG;
-import ac.grim.grimac.checks.impl.elytra.ElytraH;
-import ac.grim.grimac.checks.impl.elytra.ElytraI;
+import ac.grim.grimac.checks.impl.elytra.*;
 import ac.grim.grimac.checks.impl.exploit.ExploitA;
 import ac.grim.grimac.checks.impl.exploit.ExploitB;
-import ac.grim.grimac.checks.impl.exploit.ExploitC;
 import ac.grim.grimac.checks.impl.groundspoof.NoFall;
 import ac.grim.grimac.checks.impl.misc.ClientBrand;
 import ac.grim.grimac.checks.impl.misc.GhostBlockMitigation;
+import ac.grim.grimac.checks.impl.misc.Post;
 import ac.grim.grimac.checks.impl.misc.TransactionOrder;
 import ac.grim.grimac.checks.impl.movement.NoSlow;
 import ac.grim.grimac.checks.impl.movement.PredictionRunner;
@@ -44,39 +31,20 @@ import ac.grim.grimac.checks.impl.movement.SetbackBlocker;
 import ac.grim.grimac.checks.impl.movement.VehiclePredictionRunner;
 import ac.grim.grimac.checks.impl.multiactions.*;
 import ac.grim.grimac.checks.impl.packetorder.*;
-import ac.grim.grimac.checks.impl.misc.Post;
 import ac.grim.grimac.checks.impl.prediction.DebugHandler;
 import ac.grim.grimac.checks.impl.prediction.GroundSpoof;
 import ac.grim.grimac.checks.impl.prediction.OffsetHandler;
 import ac.grim.grimac.checks.impl.prediction.Phase;
-import ac.grim.grimac.checks.impl.scaffolding.AirLiquidPlace;
-import ac.grim.grimac.checks.impl.scaffolding.DuplicateRotPlace;
-import ac.grim.grimac.checks.impl.scaffolding.FabricatedPlace;
-import ac.grim.grimac.checks.impl.scaffolding.FarPlace;
-import ac.grim.grimac.checks.impl.scaffolding.InvalidPlaceA;
-import ac.grim.grimac.checks.impl.scaffolding.InvalidPlaceB;
-import ac.grim.grimac.checks.impl.scaffolding.MultiPlace;
-import ac.grim.grimac.checks.impl.scaffolding.PositionPlace;
-import ac.grim.grimac.checks.impl.scaffolding.RotationPlace;
+import ac.grim.grimac.checks.impl.scaffolding.*;
 import ac.grim.grimac.checks.impl.sprint.*;
-import ac.grim.grimac.checks.impl.timer.NegativeTimer;
-import ac.grim.grimac.checks.impl.timer.TickTimer;
-import ac.grim.grimac.checks.impl.timer.Timer;
-import ac.grim.grimac.checks.impl.timer.TimerLimit;
-import ac.grim.grimac.checks.impl.timer.VehicleTimer;
+import ac.grim.grimac.checks.impl.timer.*;
 import ac.grim.grimac.checks.impl.vehicle.VehicleA;
 import ac.grim.grimac.checks.impl.vehicle.VehicleB;
 import ac.grim.grimac.checks.impl.vehicle.VehicleC;
 import ac.grim.grimac.checks.impl.vehicle.VehicleD;
 import ac.grim.grimac.checks.impl.velocity.ExplosionHandler;
 import ac.grim.grimac.checks.impl.velocity.KnockbackHandler;
-import ac.grim.grimac.checks.type.BlockBreakCheck;
-import ac.grim.grimac.checks.type.BlockPlaceCheck;
-import ac.grim.grimac.checks.type.PacketCheck;
-import ac.grim.grimac.checks.type.PositionCheck;
-import ac.grim.grimac.checks.type.PostPredictionCheck;
-import ac.grim.grimac.checks.type.RotationCheck;
-import ac.grim.grimac.checks.type.VehicleCheck;
+import ac.grim.grimac.checks.type.*;
 import ac.grim.grimac.events.packets.PacketChangeGameState;
 import ac.grim.grimac.events.packets.PacketEntityReplication;
 import ac.grim.grimac.events.packets.PacketPlayerAbilities;
@@ -86,12 +54,7 @@ import ac.grim.grimac.platform.api.permissions.PermissionDefaultValue;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.predictionengine.GhostBlockDetector;
 import ac.grim.grimac.predictionengine.SneakingEstimator;
-import ac.grim.grimac.utils.anticheat.update.BlockBreak;
-import ac.grim.grimac.utils.anticheat.update.BlockPlace;
-import ac.grim.grimac.utils.anticheat.update.PositionUpdate;
-import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
-import ac.grim.grimac.utils.anticheat.update.RotationUpdate;
-import ac.grim.grimac.utils.anticheat.update.VehiclePositionUpdate;
+import ac.grim.grimac.utils.anticheat.update.*;
 import ac.grim.grimac.utils.latency.CompensatedCooldown;
 import ac.grim.grimac.utils.latency.CompensatedFireworks;
 import ac.grim.grimac.utils.latency.CompensatedInventory;
@@ -107,34 +70,33 @@ public class CheckManager {
     private static final AtomicBoolean initedAtomic = new AtomicBoolean(false);
     private static boolean inited;
     public ClassToInstanceMap<AbstractCheck> allChecks;
-    ClassToInstanceMap<PacketCheck> packetChecks;
-    ClassToInstanceMap<PositionCheck> positionCheck;
-    ClassToInstanceMap<RotationCheck> rotationCheck;
-    ClassToInstanceMap<VehicleCheck> vehicleCheck;
-    ClassToInstanceMap<PacketCheck> prePredictionChecks;
-    ClassToInstanceMap<BlockBreakCheck> blockBreakChecks;
-    ClassToInstanceMap<BlockPlaceCheck> blockPlaceCheck;
-    ClassToInstanceMap<PostPredictionCheck> postPredictionCheck;
+    private final ClassToInstanceMap<PacketCheck> packetChecks;
+    private final ClassToInstanceMap<PacketCheck> preViaPacketChecks;
+    private final ClassToInstanceMap<PositionCheck> positionChecks;
+    private final ClassToInstanceMap<RotationCheck> rotationChecks;
+    private final ClassToInstanceMap<VehicleCheck> vehicleChecks;
+    private final ClassToInstanceMap<PacketCheck> prePredictionChecks;
+    private final ClassToInstanceMap<BlockBreakCheck> blockBreakChecks;
+    private final ClassToInstanceMap<BlockPlaceCheck> blockPlaceChecks;
+    private final ClassToInstanceMap<PostPredictionCheck> postPredictionChecks;
+    private final ClassToInstanceMap<PostPredictionCheck> preViaPostPredictionChecks;
     private PacketEntityReplication packetEntityReplication = null;
     private CompensatedInventory inventory = null;
 
     public CheckManager(GrimPlayer player) {
-        // Include post checks in the packet check too
-        packetChecks = new ImmutableClassToInstanceMap.Builder<PacketCheck>()
+        preViaPacketChecks = new ImmutableClassToInstanceMap.Builder<PacketCheck>()
+                .put(PacketLogger.class, new PacketLogger(player))
                 .put(PacketOrderProcessor.class, player.packetOrderProcessor)
-                .put(Reach.class, new Reach(player))
-                .put(PacketEntityReplication.class, new PacketEntityReplication(player))
-                .put(PacketChangeGameState.class, new PacketChangeGameState(player))
-                .put(CompensatedInventory.class, new CompensatedInventory(player))
-                .put(PacketPlayerAbilities.class, new PacketPlayerAbilities(player))
-                .put(PacketWorldBorder.class, new PacketWorldBorder(player))
-                .put(ActionManager.class, player.actionManager)
-                .put(TeamHandler.class, new TeamHandler(player))
-                .put(ClientBrand.class, new ClientBrand(player))
-                .put(NoFall.class, new NoFall(player))
                 .put(ExploitA.class, new ExploitA(player))
                 .put(ExploitB.class, new ExploitB(player))
-                .put(ExploitC.class, new ExploitC(player))
+                .put(ChatA.class, new ChatA(player))
+                .put(ChatB.class, new ChatB(player))
+                .put(ChatC.class, new ChatC(player))
+                .put(ChatD.class, new ChatD(player))
+                .put(PacketOrderB.class, new PacketOrderB(player))
+                .put(PacketOrderC.class, new PacketOrderC(player))
+                .put(PacketOrderD.class, new PacketOrderD(player))
+                .put(PacketOrderO.class, new PacketOrderO(player))
                 .put(BadPacketsA.class, new BadPacketsA(player))
                 .put(BadPacketsB.class, new BadPacketsB(player))
                 .put(BadPacketsC.class, new BadPacketsC(player))
@@ -157,48 +119,49 @@ public class CheckManager {
                 .put(BadPacketsV.class, new BadPacketsV(player))
                 .put(BadPacketsY.class, new BadPacketsY(player))
                 .put(MultiActionsA.class, new MultiActionsA(player))
-                .put(MultiActionsB.class, new MultiActionsB(player))
                 .put(MultiActionsC.class, new MultiActionsC(player))
                 .put(MultiActionsD.class, new MultiActionsD(player))
                 .put(MultiActionsE.class, new MultiActionsE(player))
-                .put(MultiActionsG.class, new MultiActionsG(player))
-                .put(PacketLogger.class, new PacketLogger(player))
-                .put(PacketOrderB.class, new PacketOrderB(player))
-                .put(PacketOrderC.class, new PacketOrderC(player))
-                .put(PacketOrderD.class, new PacketOrderD(player))
-                .put(SprintA.class, new SprintA(player))
                 .put(VehicleA.class, new VehicleA(player))
                 .put(VehicleB.class, new VehicleB(player))
                 .put(VehicleD.class, new VehicleD(player))
+                .put(TickTimer.class, new TickTimer(player))
+                .put(SprintA.class, new SprintA(player))
                 .put(CrashB.class, new CrashB(player))
-                .put(CrashD.class, new CrashD(player))
                 .put(CrashE.class, new CrashE(player))
                 .put(CrashF.class, new CrashF(player))
                 .put(CrashH.class, new CrashH(player))
                 .put(CrashI.class, new CrashI(player))
+                .build();
+        packetChecks = new ImmutableClassToInstanceMap.Builder<PacketCheck>()
+                .put(Reach.class, new Reach(player))
+                .put(PacketEntityReplication.class, new PacketEntityReplication(player))
+                .put(PacketChangeGameState.class, new PacketChangeGameState(player))
+                .put(CompensatedInventory.class, new CompensatedInventory(player))
+                .put(PacketPlayerAbilities.class, new PacketPlayerAbilities(player))
+                .put(PacketWorldBorder.class, new PacketWorldBorder(player))
+                .put(ActionManager.class, player.actionManager)
+                .put(TeamHandler.class, new TeamHandler(player))
+                .put(ClientBrand.class, new ClientBrand(player))
+                .put(NoFall.class, new NoFall(player))
+                .put(CrashD.class, new CrashD(player))
                 .put(SetbackBlocker.class, new SetbackBlocker(player)) // Must be last class otherwise we can't check while blocking packets
                 .build();
-        positionCheck = new ImmutableClassToInstanceMap.Builder<PositionCheck>()
+
+        positionChecks = new ImmutableClassToInstanceMap.Builder<PositionCheck>()
                 .put(PredictionRunner.class, new PredictionRunner(player))
                 .put(CompensatedCooldown.class, new CompensatedCooldown(player))
                 .build();
-        rotationCheck = new ImmutableClassToInstanceMap.Builder<RotationCheck>()
+        rotationChecks = new ImmutableClassToInstanceMap.Builder<RotationCheck>()
                 .put(AimProcessor.class, new AimProcessor(player))
                 .put(AimModulo360.class, new AimModulo360(player))
                 .put(AimDuplicateLook.class, new AimDuplicateLook(player))
-//                .put(Baritone.class, new Baritone(player))
                 .build();
-        vehicleCheck = new ImmutableClassToInstanceMap.Builder<VehicleCheck>()
+        vehicleChecks = new ImmutableClassToInstanceMap.Builder<VehicleCheck>()
                 .put(VehiclePredictionRunner.class, new VehiclePredictionRunner(player))
                 .build();
 
-        postPredictionCheck = new ImmutableClassToInstanceMap.Builder<PostPredictionCheck>()
-                .put(NegativeTimer.class, new NegativeTimer(player))
-                .put(ExplosionHandler.class, new ExplosionHandler(player))
-                .put(KnockbackHandler.class, new KnockbackHandler(player))
-                .put(GhostBlockDetector.class, new GhostBlockDetector(player))
-                .put(Phase.class, new Phase(player))
-                .put(Post.class, new Post(player))
+        preViaPostPredictionChecks = new ImmutableClassToInstanceMap.Builder<PostPredictionCheck>()
                 .put(PacketOrderA.class, new PacketOrderA(player))
                 .put(PacketOrderE.class, new PacketOrderE(player))
                 .put(PacketOrderF.class, new PacketOrderF(player))
@@ -209,20 +172,13 @@ public class CheckManager {
                 .put(PacketOrderK.class, new PacketOrderK(player))
                 .put(PacketOrderL.class, new PacketOrderL(player))
                 .put(PacketOrderM.class, new PacketOrderM(player))
-                .put(GroundSpoof.class, new GroundSpoof(player))
-                .put(OffsetHandler.class, new OffsetHandler(player))
-                .put(SuperDebug.class, new SuperDebug(player))
-                .put(DebugHandler.class, new DebugHandler(player))
                 .put(BadPacketsX.class, new BadPacketsX(player))
-                .put(NoSlow.class, new NoSlow(player))
                 .put(SprintB.class, new SprintB(player))
                 .put(SprintC.class, new SprintC(player))
                 .put(SprintD.class, new SprintD(player))
                 .put(SprintE.class, new SprintE(player))
                 .put(SprintF.class, new SprintF(player))
                 .put(SprintG.class, new SprintG(player))
-                .put(MultiInteractA.class, new MultiInteractA(player))
-                .put(MultiInteractB.class, new MultiInteractB(player))
                 .put(ElytraA.class, new ElytraA(player))
                 .put(ElytraB.class, new ElytraB(player))
                 .put(ElytraC.class, new ElytraC(player))
@@ -232,18 +188,34 @@ public class CheckManager {
                 .put(ElytraG.class, new ElytraG(player))
                 .put(ElytraH.class, new ElytraH(player))
                 .put(ElytraI.class, new ElytraI(player))
+                .put(MultiInteractA.class, new MultiInteractA(player))
+                .put(MultiInteractB.class, new MultiInteractB(player))
+                .build();
+        postPredictionChecks = new ImmutableClassToInstanceMap.Builder<PostPredictionCheck>()
+                .put(NegativeTimer.class, new NegativeTimer(player))
+                .put(ExplosionHandler.class, new ExplosionHandler(player))
+                .put(KnockbackHandler.class, new KnockbackHandler(player))
+                .put(GhostBlockDetector.class, new GhostBlockDetector(player))
+                .put(Phase.class, new Phase(player))
+                .put(Post.class, new Post(player))
+                .put(GroundSpoof.class, new GroundSpoof(player))
+                .put(OffsetHandler.class, new OffsetHandler(player))
+                .put(SuperDebug.class, new SuperDebug(player))
+                .put(DebugHandler.class, new DebugHandler(player))
+                .put(NoSlow.class, new NoSlow(player))
                 .put(SetbackTeleportUtil.class, new SetbackTeleportUtil(player)) // Avoid teleporting to new position, update safe pos last
                 .put(CompensatedFireworks.class, player.fireworks)
                 .put(SneakingEstimator.class, new SneakingEstimator(player))
                 .put(LastInstanceManager.class, player.lastInstanceManager)
                 .build();
 
-        blockPlaceCheck = new ImmutableClassToInstanceMap.Builder<BlockPlaceCheck>()
+        blockPlaceChecks = new ImmutableClassToInstanceMap.Builder<BlockPlaceCheck>()
                 .put(InvalidPlaceA.class, new InvalidPlaceA(player))
                 .put(InvalidPlaceB.class, new InvalidPlaceB(player))
                 .put(AirLiquidPlace.class, new AirLiquidPlace(player))
                 .put(MultiPlace.class, new MultiPlace(player))
                 .put(MultiActionsF.class, new MultiActionsF(player))
+                .put(MultiActionsG.class, new MultiActionsG(player))
                 .put(BadPacketsH.class, new BadPacketsH(player))
                 .put(CrashG.class, new CrashG(player))
                 .put(FarPlace.class, new FarPlace(player))
@@ -257,7 +229,6 @@ public class CheckManager {
 
         prePredictionChecks = new ImmutableClassToInstanceMap.Builder<PacketCheck>()
                 .put(Timer.class, new Timer(player))
-                .put(TickTimer.class, new TickTimer(player))
                 .put(TimerLimit.class, new TimerLimit(player))
                 .put(CrashA.class, new CrashA(player))
                 .put(CrashC.class, new CrashC(player))
@@ -275,6 +246,7 @@ public class CheckManager {
                 .put(InvalidBreak.class, new InvalidBreak(player))
                 .put(PositionBreakA.class, new PositionBreakA(player))
                 .put(PositionBreakB.class, new PositionBreakB(player))
+                .put(MultiActionsB.class, new MultiActionsB(player))
                 .build();
 
         // All checks that have no listeners, generally invoked by other code to flag
@@ -290,11 +262,13 @@ public class CheckManager {
 
         allChecks = new ImmutableClassToInstanceMap.Builder<AbstractCheck>()
                 .putAll(packetChecks)
-                .putAll(positionCheck)
-                .putAll(rotationCheck)
-                .putAll(vehicleCheck)
-                .putAll(postPredictionCheck)
-                .putAll(blockPlaceCheck)
+                .putAll(preViaPacketChecks)
+                .putAll(positionChecks)
+                .putAll(rotationChecks)
+                .putAll(vehicleChecks)
+                .putAll(preViaPostPredictionChecks)
+                .putAll(postPredictionChecks)
+                .putAll(blockPlaceChecks)
                 .putAll(prePredictionChecks)
                 .putAll(blockBreakChecks)
                 .putAll(noneModules)
@@ -310,17 +284,17 @@ public class CheckManager {
 
     @SuppressWarnings("unchecked")
     public <T extends PositionCheck> T getPositionCheck(Class<T> check) {
-        return (T) positionCheck.get(check);
+        return (T) positionChecks.get(check);
     }
 
     @SuppressWarnings("unchecked")
     public <T extends RotationCheck> T getRotationCheck(Class<T> check) {
-        return (T) rotationCheck.get(check);
+        return (T) rotationChecks.get(check);
     }
 
     @SuppressWarnings("unchecked")
     public <T extends BlockPlaceCheck> T getBlockPlaceCheck(Class<T> check) {
-        return (T) blockPlaceCheck.get(check);
+        return (T) blockPlaceChecks.get(check);
     }
 
     public void onPrePredictionReceivePacket(final PacketReceiveEvent packet) {
@@ -333,13 +307,22 @@ public class CheckManager {
         for (PacketCheck check : packetChecks.values()) {
             check.onPacketReceive(packet);
         }
-        for (PostPredictionCheck check : postPredictionCheck.values()) {
+        for (PostPredictionCheck check : postPredictionChecks.values()) {
             check.onPacketReceive(packet);
         }
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onPacketReceive(packet);
         }
-        for (BlockBreakCheck check : blockBreakChecks.values()) {
+    }
+
+    public void onPreViaPacketReceive(final PacketReceiveEvent packet) {
+        for (PacketCheck check : preViaPacketChecks.values()) {
+            check.onPacketReceive(packet);
+        }
+        for (PacketCheck check : preViaPostPredictionChecks.values()) {
+            check.onPacketReceive(packet);
+        }
+        for (PacketCheck check : blockBreakChecks.values()) {
             check.onPacketReceive(packet);
         }
     }
@@ -351,43 +334,55 @@ public class CheckManager {
         for (PacketCheck check : packetChecks.values()) {
             check.onPacketSend(packet);
         }
-        for (PostPredictionCheck check : postPredictionCheck.values()) {
+        for (PostPredictionCheck check : postPredictionChecks.values()) {
             check.onPacketSend(packet);
         }
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onPacketSend(packet);
         }
-        for (BlockBreakCheck check : blockBreakChecks.values()) {
+    }
+
+    public void onPreViaPacketSend(final PacketSendEvent packet) {
+        for (PacketCheck check : preViaPacketChecks.values()) {
+            check.onPacketSend(packet);
+        }
+        for (PacketCheck check : preViaPostPredictionChecks.values()) {
+            check.onPacketSend(packet);
+        }
+        for (PacketCheck check : blockBreakChecks.values()) {
             check.onPacketSend(packet);
         }
     }
 
     public void onPositionUpdate(final PositionUpdate position) {
-        for (PositionCheck check : positionCheck.values()) {
+        for (PositionCheck check : positionChecks.values()) {
             check.onPositionUpdate(position);
         }
     }
 
     public void onRotationUpdate(final RotationUpdate rotation) {
-        for (RotationCheck check : rotationCheck.values()) {
+        for (RotationCheck check : rotationChecks.values()) {
             check.process(rotation);
         }
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.process(rotation);
         }
     }
 
     public void onVehiclePositionUpdate(final VehiclePositionUpdate update) {
-        for (VehicleCheck check : vehicleCheck.values()) {
+        for (VehicleCheck check : vehicleChecks.values()) {
             check.process(update);
         }
     }
 
     public void onPredictionFinish(final PredictionComplete complete) {
-        for (PostPredictionCheck check : postPredictionCheck.values()) {
+        for (PostPredictionCheck check : postPredictionChecks.values()) {
             check.onPredictionComplete(complete);
         }
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (PostPredictionCheck check : preViaPostPredictionChecks.values()) {
+            check.onPredictionComplete(complete);
+        }
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onPredictionComplete(complete);
         }
         for (BlockBreakCheck check : blockBreakChecks.values()) {
@@ -396,13 +391,13 @@ public class CheckManager {
     }
 
     public void onBlockPlace(final BlockPlace place) {
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onBlockPlace(place);
         }
     }
 
     public void onPostFlyingBlockPlace(final BlockPlace place) {
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onPostFlyingBlockPlace(place);
         }
     }
@@ -411,7 +406,7 @@ public class CheckManager {
         for (BlockBreakCheck check : blockBreakChecks.values()) {
             check.onBlockBreak(blockBreak);
         }
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onBlockBreak(blockBreak);
         }
     }
@@ -420,7 +415,7 @@ public class CheckManager {
         for (BlockBreakCheck check : blockBreakChecks.values()) {
             check.onPostFlyingBlockBreak(blockBreak);
         }
-        for (BlockPlaceCheck check : blockPlaceCheck.values()) {
+        for (BlockPlaceCheck check : blockPlaceChecks.values()) {
             check.onPostFlyingBlockBreak(blockBreak);
         }
     }
@@ -432,6 +427,11 @@ public class CheckManager {
     @SuppressWarnings("unchecked")
     public <T extends PacketCheck> T getPacketCheck(Class<T> check) {
         return (T) packetChecks.get(check);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends PacketCheck> T getPreViaPacketCheck(Class<T> check) {
+        return (T) preViaPacketChecks.get(check);
     }
 
     @SuppressWarnings("unchecked")
@@ -480,7 +480,12 @@ public class CheckManager {
 
     @SuppressWarnings("unchecked")
     public <T extends PostPredictionCheck> T getPostPredictionCheck(Class<T> check) {
-        return (T) postPredictionCheck.get(check);
+        return (T) postPredictionChecks.get(check);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends PostPredictionCheck> T getPreViaPostPredictionCheck(Class<T> check) {
+        return (T) preViaPostPredictionChecks.get(check);
     }
 
     private void init() {

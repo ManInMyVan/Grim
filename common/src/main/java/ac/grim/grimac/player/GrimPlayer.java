@@ -274,6 +274,7 @@ public class GrimPlayer implements GrimUser {
     public final LongSet visitedBlocks = new LongOpenHashSet();
     private @Nullable UserConnection viaUserConnection;
     public boolean wasLastPredictionCompleteChecked;
+    public boolean isJumping = false, lastJumping = false;
 
     public GrimPlayer(@NonNull User user) {
         this.user = user;
@@ -737,22 +738,14 @@ public class GrimPlayer implements GrimUser {
                 if (data != null) {
                     user.writePacket(new WrapperPlayServerEntityTeleport(ridingId, new Vector3d(data.getX(), data.getY(), data.getZ()), data.getXRot(), data.getYRot(), false));
                 }
-
-                // vehicle velocity is present after dismounting, this is a workaround for that
-                // otherwise jumping on a horse and then dismounting it will cause false positives
-                // it's just easier to do this rather than dealing with all this transaction splitting bullshit
-                //
-                // TODO: turns out to be a 1.21.2+ client/1.21.2+ server issue
-                if (supportsEndTick()) {
-                    user.writePacket(new WrapperPlayServerEntityVelocity(entityID, new Vector3d()));
-                }
             }
         });
 
         latencyUtils.addRealTimeTask(lastTransactionSent.get(), () -> {
             this.vehicleData.wasVehicleSwitch = true;
             // Pre-1.14 players desync sprinting attribute when in vehicle to be false, sprinting itself doesn't change
-            if (getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_14)) {
+            // 1.21.5 introduced this again!
+            if (getClientVersion().isOlderThanOrEquals(ClientVersion.V_1_14) || getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_21_5)) {
                 compensatedEntities.hasSprintingAttributeEnabled = false;
             }
         });
@@ -802,13 +795,22 @@ public class GrimPlayer implements GrimUser {
 
     @Contract(pure = true)
     public boolean supportsEndTick() {
-        // TODO: Bypass viaversion
-        return getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_21_2) && PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_21_2);
+        return supportsEndTickPreVia() && PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_21_2);
+    }
+
+    @Contract(pure = true)
+    public boolean supportsEndTickPreVia() {
+        return getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_21_2);
     }
 
     @Contract(pure = true)
     public boolean canSkipTicks() {
         return getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9) && !supportsEndTick();
+    }
+
+    @Contract(pure = true)
+    public boolean canSkipTicksPreVia() {
+        return getClientVersion().isNewerThanOrEquals(ClientVersion.V_1_9) && !supportsEndTickPreVia();
     }
 
     @Override

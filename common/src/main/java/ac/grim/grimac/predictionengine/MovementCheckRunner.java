@@ -91,6 +91,13 @@ public class MovementCheckRunner extends Check implements PositionCheck {
 
         // Reset velocities
         // Teleporting a vehicle does not reset its velocity
+        //
+        // In version 1.21.2+, the new teleport system can modify the player's velocity
+        // even while the player is in a vehicle
+        //
+        // However, for some reason, this behaviour does not work correctly in Grim
+        // to work around this, we remove the velocity data from the teleport packet
+        // in PacketServerTeleport#onPacketSend
         if (!player.inVehicle()) {
             if (update.getTeleportData() == null) {
                 player.clientVelocity.setX(0);
@@ -309,6 +316,9 @@ public class MovementCheckRunner extends Check implements PositionCheck {
         if (player.isSprinting != player.lastSprinting) {
             player.compensatedEntities.hasSprintingAttributeEnabled = player.isSprinting;
         }
+
+        player.lastJumping = player.isJumping;
+        player.isJumping = player.packetStateData.knownInput.jump();
 
         boolean oldFlying = player.isFlying;
         boolean oldGliding = player.isGliding;
