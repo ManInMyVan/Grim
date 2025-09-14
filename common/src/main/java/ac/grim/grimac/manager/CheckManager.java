@@ -38,10 +38,7 @@ import ac.grim.grimac.checks.impl.prediction.Phase;
 import ac.grim.grimac.checks.impl.scaffolding.*;
 import ac.grim.grimac.checks.impl.sprint.*;
 import ac.grim.grimac.checks.impl.timer.*;
-import ac.grim.grimac.checks.impl.vehicle.VehicleA;
-import ac.grim.grimac.checks.impl.vehicle.VehicleB;
-import ac.grim.grimac.checks.impl.vehicle.VehicleC;
-import ac.grim.grimac.checks.impl.vehicle.VehicleD;
+import ac.grim.grimac.checks.impl.vehicle.*;
 import ac.grim.grimac.checks.impl.velocity.ExplosionHandler;
 import ac.grim.grimac.checks.impl.velocity.KnockbackHandler;
 import ac.grim.grimac.checks.type.*;
@@ -69,7 +66,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CheckManager {
     private static final AtomicBoolean initedAtomic = new AtomicBoolean(false);
     private static boolean inited;
-    public ClassToInstanceMap<AbstractCheck> allChecks;
+    public final ClassToInstanceMap<AbstractCheck> allChecks;
     private final ClassToInstanceMap<PacketCheck> packetChecks;
     private final ClassToInstanceMap<PacketCheck> preViaPacketChecks;
     private final ClassToInstanceMap<PositionCheck> positionChecks;
@@ -90,8 +87,6 @@ public class CheckManager {
                 .put(ExploitA.class, new ExploitA(player))
                 .put(ExploitB.class, new ExploitB(player))
                 .put(ChatA.class, new ChatA(player))
-                .put(ChatB.class, new ChatB(player))
-                .put(ChatC.class, new ChatC(player))
                 .put(ChatD.class, new ChatD(player))
                 .put(PacketOrderB.class, new PacketOrderB(player))
                 .put(PacketOrderC.class, new PacketOrderC(player))
@@ -125,6 +120,8 @@ public class CheckManager {
                 .put(VehicleA.class, new VehicleA(player))
                 .put(VehicleB.class, new VehicleB(player))
                 .put(VehicleD.class, new VehicleD(player))
+                .put(VehicleE.class, new VehicleE(player))
+                .put(VehicleF.class, new VehicleF(player))
                 .put(TickTimer.class, new TickTimer(player))
                 .put(SprintA.class, new SprintA(player))
                 .put(CrashB.class, new CrashB(player))
@@ -144,6 +141,8 @@ public class CheckManager {
                 .put(TeamHandler.class, new TeamHandler(player))
                 .put(ClientBrand.class, new ClientBrand(player))
                 .put(NoFall.class, new NoFall(player))
+                .put(ChatB.class, new ChatB(player))
+                .put(ChatC.class, new ChatC(player))
                 .put(CrashD.class, new CrashD(player))
                 .put(SetbackBlocker.class, new SetbackBlocker(player)) // Must be last class otherwise we can't check while blocking packets
                 .build();

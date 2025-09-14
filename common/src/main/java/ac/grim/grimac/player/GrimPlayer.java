@@ -56,6 +56,7 @@ import com.github.retrooper.packetevents.protocol.ConnectionState;
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemEquippable;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
@@ -142,7 +143,7 @@ public class GrimPlayer implements GrimUser {
     public VectorData predictedVelocity = new VectorData(new Vector3dm(), VectorData.VectorType.Normal);
     public Vector3dm actualMovement = new Vector3dm();
     public Vector3dm stuckSpeedMultiplier = new Vector3dm(1, 1, 1);
-    public UncertaintyHandler uncertaintyHandler;
+    public final UncertaintyHandler uncertaintyHandler;
     public double gravity;
     public float friction;
     public double speed;
@@ -274,7 +275,8 @@ public class GrimPlayer implements GrimUser {
     public final LongSet visitedBlocks = new LongOpenHashSet();
     private @Nullable UserConnection viaUserConnection;
     public boolean wasLastPredictionCompleteChecked;
-    public boolean isJumping = false, lastJumping = false;
+    public boolean isJumping;
+    public boolean lastJumping;
 
     public GrimPlayer(@NonNull User user) {
         this.user = user;
@@ -635,6 +637,14 @@ public class GrimPlayer implements GrimUser {
 
     public boolean inVehicle() {
         return compensatedEntities.self.inVehicle();
+    }
+
+    public PacketEntity getVehicle() {
+        return compensatedEntities.self.riding;
+    }
+
+    public EntityType getVehicleType() {
+        return inVehicle() ? getVehicle().type : null;
     }
 
     public CompensatedInventory getInventory() {

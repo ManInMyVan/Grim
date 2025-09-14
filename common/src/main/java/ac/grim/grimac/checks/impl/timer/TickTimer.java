@@ -7,6 +7,8 @@ import ac.grim.grimac.player.GrimPlayer;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 
+import static com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying.isFlying;
+
 @CheckData(name = "TickTimer", setback = 1)
 public class TickTimer extends Check implements PacketCheck {
 

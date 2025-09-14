@@ -54,10 +54,6 @@ public class PreViaCheckManagerListener extends PacketListenerAbstract {
         GrimPlayer player = GrimAPI.INSTANCE.getPlayerDataManager().getPlayer(event.getUser());
         if (player == null) return;
 
-        if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
-            player.latencyUtils.addRealTimeTask(player.lastTransactionSent.get(), () -> player.serverOpenedInventoryThisTick = true);
-        }
-
         // Determine if teleport BEFORE we call the pre-prediction vehicle
         if (event.getPacketType() == PacketType.Play.Client.VEHICLE_MOVE) {
             WrapperPlayClientVehicleMove move = new WrapperPlayClientVehicleMove(event);
@@ -269,11 +265,6 @@ public class PreViaCheckManagerListener extends PacketListenerAbstract {
 
         // This stupid mechanic has been measured with 0.03403409022229198 y velocity... DAMN IT MOJANG, use 0.06 to be safe...
         if (!hasPosition && onGround != player.packetStateData.packetPlayerOnGround && !player.inVehicle()) {
-            player.lastOnGround = onGround;
-            player.clientClaimsLastOnGround = onGround;
-            player.uncertaintyHandler.onGroundUncertain = true;
-
-            // Ghost block/0.03 abuse
             // Check for blocks within 0.03 of the player's position before allowing ground to be true - if 0.03
             // Cannot use collisions like normal because stepping messes it up :(
             //
@@ -281,7 +272,13 @@ public class PreViaCheckManagerListener extends PacketListenerAbstract {
             boolean canFeasiblyPointThree = Collisions.slowCouldPointThreeHitGround(player, player.x, player.y, player.z);
             if (!canFeasiblyPointThree && !player.compensatedWorld.isNearHardEntity(player.boundingBox.copy().expand(4))
                     || player.clientVelocity.getY() > 0.06 && !player.uncertaintyHandler.wasAffectedByStuckSpeed()) {
+                // Ghost block/0.03 abuse
                 player.getSetbackTeleportUtil().executeForceResync();
+            } else {
+                // Accept the new ground status
+                player.lastOnGround = onGround;
+                player.clientClaimsLastOnGround = onGround;
+                player.uncertaintyHandler.onGroundUncertain = true;
             }
         }
 

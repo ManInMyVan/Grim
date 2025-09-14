@@ -327,7 +327,7 @@ public class CompensatedInventory extends Check implements PacketCheck {
 
     public void markSlotAsResyncing(BlockPlace place) {
         // Update held item tracking
-        if (place.getHand() == InteractionHand.MAIN_HAND) {
+        if (place.hand == InteractionHand.MAIN_HAND) {
             inventory.getInventoryStorage().handleClientClaimedSlotSet(Inventory.HOTBAR_OFFSET + player.packetStateData.lastSlotSelected);
         } else {
             inventory.getInventoryStorage().handleServerCorrectSlot(Inventory.SLOT_OFFHAND);
@@ -335,9 +335,9 @@ public class CompensatedInventory extends Check implements PacketCheck {
     }
 
     public void onBlockPlace(BlockPlace place) {
-        if (player.gamemode != GameMode.CREATIVE && place.getItemStack().getType() != ItemTypes.POWDER_SNOW_BUCKET) {
+        if (player.gamemode != GameMode.CREATIVE && place.itemStack.getType() != ItemTypes.POWDER_SNOW_BUCKET) {
             markSlotAsResyncing(place);
-            place.getItemStack().setAmount(place.getItemStack().getAmount() - 1);
+            place.itemStack.setAmount(place.itemStack.getAmount() - 1);
         }
     }
 

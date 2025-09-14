@@ -7,7 +7,7 @@ configuralize = "1.4.1:slim"
 cloud = "2.0.0"
 cloud-paper = "2.0.0-beta.11"
 cloud-fabric = "2.0.0-beta.11"
-packetevents = "2.9.4-SNAPSHOT"
+packetevents = "2.9.5-SNAPSHOT"
 fastutil = "8.5.15"
 jetbrains-annotations = "24.1.0"
 floodgate-api = "2.0-SNAPSHOT"
@@ -18,7 +18,7 @@ fabric-loom = "1.11.4"
 
 spotless = "6.25.0"
 lombok = "8.6"
-shadow = "9.0.0-beta8"
+shadow = "9.0.0-rc2"
 
 [libraries]
 adventure-text-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure"}
