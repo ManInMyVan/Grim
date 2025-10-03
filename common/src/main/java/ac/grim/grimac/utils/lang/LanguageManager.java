@@ -2,7 +2,7 @@ package ac.grim.grimac.utils.lang;
 
 import ac.grim.grimac.api.config.ConfigManager;
 import ac.grim.grimac.api.config.ConfigReloadable;
-import org.jetbrains.annotations.Contract;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -10,26 +10,16 @@ import java.util.Map;
 
 // TODO: actually use this
 public class LanguageManager implements ConfigReloadable {
+    private static final @NotNull LanguageCode systemLanguageCode = LanguageCode.of(
+            System.getProperty("user.language"),
+            System.getProperty("user.country")
+    );
+
     public final @NotNull Map<@NotNull String, @NotNull String> fallbacks = new HashMap<>();
     public final @NotNull HashMap<@NotNull String, @NotNull ConfiguredLanguage> languages = new HashMap<>();
-
-    // TODO: cache
-    @Contract(pure = true)
-    public @NotNull Language getSystemLanguage() {
-        return get(LanguageCodes.getSystemLanguageCode().code());
-    }
-
-    // TODO: cache
-    @Contract(pure = true)
-    public @NotNull Language getConsoleLanguage() {
-        return get(LanguageCodes.getConsoleLanguageCode().code());
-    }
-
-    // TODO: cache
-    @Contract(pure = true)
-    public @NotNull Language getDefaultLanguage() {
-        return get(LanguageCodes.getDefaultLanguageCode().code());
-    }
+    @Getter private @NotNull Language systemLanguage = FallbackLanguage.INSTANCE;
+    @Getter private @NotNull Language consoleLanguage = FallbackLanguage.INSTANCE;
+    @Getter private @NotNull Language defaultLanguage = FallbackLanguage.INSTANCE;
 
     // TODO: fallback from no country to any with same language
     public @NotNull Language get(String code) {
@@ -42,16 +32,18 @@ public class LanguageManager implements ConfigReloadable {
     }
 
     public void reload(ConfigManager config) {
-        String code = config.getString("default");
-        LanguageCodes.setConsoleLanguageCode(code == null || code.equalsIgnoreCase("system")
-                || code.equalsIgnoreCase("default") ? null : LanguageCode.of(code));
-
-        code = config.getString("default");
-        LanguageCodes.setDefaultLanguageCode(code == null || code.equalsIgnoreCase("system")
-                || code.equalsIgnoreCase("default") ? null : LanguageCode.of(code));
-
         reloadLanguages();
         reloadFallbacks(config);
+
+        systemLanguage = get(systemLanguageCode.code());
+
+        String code = config.getString("default-language");
+        defaultLanguage = code == null || code.equalsIgnoreCase("system") || code.equalsIgnoreCase("default")
+                ? systemLanguage : get(code);
+
+        code = config.getString("console-language");
+        consoleLanguage = code == null || code.equalsIgnoreCase("system") || code.equalsIgnoreCase("default")
+                ? defaultLanguage : get(code);
     }
 
     // TODO: actually implement this
@@ -68,12 +60,12 @@ public class LanguageManager implements ConfigReloadable {
     }
 
     private void reloadLanguages() {
-        Map<String, Map<String, String>> languages = LanguageUtil.getLanguages();
-        this.languages.keySet().retainAll(languages.keySet());
+        @NotNull Map<String, LanguageFile> languageFiles = LanguageFile.getLanguages();
+        languages.keySet().retainAll(languageFiles.keySet());
 
-        for (Map.Entry<String, Map<String, String>> entry : languages.entrySet()) {
-            ConfiguredLanguage language = this.languages.computeIfAbsent(entry.getKey(), k -> new ConfiguredLanguage());
-            language.setTranslations(entry.getValue());
+        for (Map.Entry<String, LanguageFile> entry : languageFiles.entrySet()) {
+            ConfiguredLanguage language = languages.computeIfAbsent(entry.getKey(), k -> new ConfiguredLanguage());
+            language.setTranslations(entry.getValue().translations());
         }
     }
 }

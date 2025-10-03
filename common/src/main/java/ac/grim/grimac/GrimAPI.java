@@ -26,6 +26,7 @@ import ac.grim.grimac.platform.api.sender.SenderFactory;
 import ac.grim.grimac.utils.anticheat.PlayerDataManager;
 import ac.grim.grimac.utils.common.GrimArguments;
 import ac.grim.grimac.utils.reflection.ReflectionUtils;
+import com.google.gson.Gson;
 import lombok.Getter;
 import org.incendo.cloud.CommandManager;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public final class GrimAPI {
     public static final GrimAPI INSTANCE = new GrimAPI();
+    public static final Gson GSON = new Gson();
 
     @Getter
     private final Platform platform = detectPlatform();

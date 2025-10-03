@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public enum FallbackLanguage implements Language {
     INSTANCE;
 
+    // TODO: add more defaults
     @Contract(value = "null -> null", pure = true)
     @Override
     public @Nullable String get(@Nullable String key) {

@@ -23,4 +23,9 @@ public record LanguageCode(@NotNull String language, @NotNull String country) {
     public @NotNull String code() {
         return language + (country.isEmpty() ? "" : "_" + country);
     }
+
+    @Override
+    public @NotNull String toString() {
+        return code();
+    }
 }
