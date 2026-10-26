@@ -27,8 +27,6 @@ public class SprintA extends Check implements PostPredictionListener {
         if (player.food <= 6.0F) {
             if (player.isSprinting) {
                 flagWithSetback(V.write(verbose()).uint(player.food));
-            } else {
-                reward();
             }
         }
     }

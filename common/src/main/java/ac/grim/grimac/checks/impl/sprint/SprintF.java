@@ -23,8 +23,6 @@ public class SprintF extends Check implements PostPredictionListener {
         if (player.wasGliding && player.isGliding) {
             if (player.isSprinting) {
                 flagWithSetback();
-            } else {
-                reward();
             }
         }
     }

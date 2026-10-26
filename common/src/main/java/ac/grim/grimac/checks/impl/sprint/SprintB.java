@@ -45,7 +45,7 @@ public class SprintB extends Check implements PostPredictionListener {
 
             if (player.isSprinting) {
                 flagWithSetback();
-            } else reward();
+            }
         }
     }
 }

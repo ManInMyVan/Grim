@@ -34,7 +34,7 @@ public class SprintD extends Check implements PacketReceiveListener, PostPredict
         if (player.compensatedEntities.self.hasPotionEffect(BLINDNESS) && !startedSprintingBeforeBlind) {
             if (player.isSprinting) {
                 flagWithSetback();
-            } else reward();
+            }
         }
     }
 }

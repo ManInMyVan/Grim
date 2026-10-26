@@ -10,7 +10,7 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 
-@CheckData(name = "BadPacketsR", stableKey = "grim.badpackets.position_starvation", description = "Stopped sending position updates while still responding to transactions", decay = 0.25, experimental = true)
+@CheckData(name = "BadPacketsR", stableKey = "grim.badpackets.position_starvation", description = "Stopped sending position updates while still responding to transactions", experimental = true)
 public class BadPacketsR extends Check implements PacketReceiveListener {
     private static final Verbose V = Verbose.of("time={ulong}ms, lst={ulong}ms, positions={uint}");
 
@@ -31,8 +31,6 @@ public class BadPacketsR extends Check implements PacketReceiveListener {
             if (diff > 2000 && ms > 2000) {
                 if (positions == 0 && clock != 0 && player.cameraEntity.isSelf() && !player.compensatedEntities.self.isDead) {
                     flag(V.write(verbose()).ulong(ms).ulong(diff).uint(positions));
-                } else {
-                    reward();
                 }
                 player.compensatedEntities.entitiesRemovedThisTick.clear();
                 player.compensatedWorld.removeInvalidPistonLikeStuff(oldTransId);

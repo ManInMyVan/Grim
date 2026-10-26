@@ -23,8 +23,6 @@ public class SprintG extends Check implements PostPredictionListener {
                 && !player.isSwimming) {
             if (player.isSprinting) {
                 flagWithSetback();
-            } else {
-                reward();
             }
         }
     }

@@ -40,7 +40,6 @@ public class NoSlow extends Check implements PostPredictionListener {
                 }
                 flaggedLastTick = true;
             } else {
-                reward();
                 flaggedLastTick = false;
             }
         } else {

@@ -224,6 +224,16 @@ public class PunishmentManager implements ConfigReloadable {
     private int getViolations(PunishGroup group, Check check) {
         return group.violations.count(check);
     }
+
+    public int getViolations(Check check) {
+        int max = 0;
+
+        for (PunishGroup group : groups) {
+            max = Math.max(max, getViolations(group, check));
+        }
+
+        return max;
+    }
 }
 
 @RequiredArgsConstructor

@@ -38,8 +38,6 @@ public class SprintE extends Check implements PacketReceiveListener, PostPredict
                 && player.wasLastPredictionCompleteChecked) {
             if (player.isSprinting) {
                 flagWithSetback();
-            } else {
-                reward();
             }
         }
 

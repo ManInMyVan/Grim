@@ -25,9 +25,7 @@ public @interface CheckData {
      */
     String stableKey();
 
-    double decay() default 0.05;
-
-    double setback() default 25;
+    int setback() default 25;
 
     boolean experimental() default false;
 

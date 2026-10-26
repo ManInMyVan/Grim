@@ -9,12 +9,14 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PostPredictionListener;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
+import ac.grim.grimac.utils.math.GrimMath;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@CheckData(name = "Simulation", stableKey = "grim.prediction.simulation", description = "Moved differently than predicted movement simulation", decay = 0.02)
+@CheckData(name = "Simulation", stableKey = "grim.prediction.simulation", description = "Moved differently than predicted movement simulation")
 public class OffsetHandler extends Check implements PostPredictionListener {
+    private static final CompletePredictionEvent.Channel COMPLETE_CHANNEL = GrimAPI.INSTANCE.getEventBus().get(CompletePredictionEvent.class);
     private static final Verbose V = Verbose.of("{offset}");
 
     private static final AtomicInteger flags = new AtomicInteger(0);
@@ -24,10 +26,9 @@ public class OffsetHandler extends Check implements PostPredictionListener {
     private double immediateSetbackThreshold;
     private double maxAdvantage;
     private double maxCeiling;
-    private double setbackViolationThreshold;
+    private int setbackViolationThreshold;
     // Current advantage gained
     private double advantageGained = 0;
-    private static final CompletePredictionEvent.Channel COMPLETE_CHANNEL = GrimAPI.INSTANCE.getEventBus().get(CompletePredictionEvent.class);
 
     public OffsetHandler(GrimPlayer player) {
         super(player);
@@ -48,12 +49,12 @@ public class OffsetHandler extends Check implements PostPredictionListener {
                 int flagId = (flags.get() & 255) + 1; // 1-256 as possible values
 
                 if (flag(V.write(verbose()).f64(offset), () -> humanFormattedOffset(offset) + " /gl " + flagId)) {
-                    flags.incrementAndGet();
+                    flags.getAndIncrement();
                     predictionComplete.setIdentifier(flagId);
 
                     if ((advantageGained >= maxAdvantage || offset >= immediateSetbackThreshold)
                             && !isNoSetbackPermission()
-                            && violations >= setbackViolationThreshold) {
+                            && getViolations() >= setbackViolationThreshold) {
                         player.getSetbackTeleportUtil().executeViolationSetback();
                     }
                 }
@@ -106,7 +107,7 @@ public class OffsetHandler extends Check implements PostPredictionListener {
         immediateSetbackThreshold = config.getDoubleElse("Simulation.immediate-setback-threshold", 0.1);
         maxAdvantage = config.getDoubleElse("Simulation.max-advantage", 1);
         maxCeiling = config.getDoubleElse("Simulation.max-ceiling", 4);
-        setbackViolationThreshold = config.getDoubleElse("Simulation.setback-violation-threshold", 1);
+        setbackViolationThreshold = GrimMath.ceil(config.getDoubleElse("Simulation.setback-violation-threshold", 1));
         if (maxAdvantage == -1) maxAdvantage = Double.MAX_VALUE;
         if (immediateSetbackThreshold == -1) immediateSetbackThreshold = Double.MAX_VALUE;
     }

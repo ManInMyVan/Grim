@@ -41,11 +41,7 @@ public class DuplicateRotPlace extends BlockPlaceCheck implements RotationListen
 
                 if (xDiff < 0.0001) {
                     flag(V.write(verbose()).f64(xDiff).f64(xDiffDots).f64(deltaY));
-                } else {
-                    reward();
                 }
-            } else {
-                reward();
             }
             this.lastPlacedDeltaX = deltaX;
             this.lastPlacedDeltaDotsX = deltaDotsX;

@@ -9,8 +9,10 @@ import ac.grim.grimac.api.storage.verbose.VerboseBuf;
 import ac.grim.grimac.api.storage.verbose.VerboseRenderContext;
 import ac.grim.grimac.internal.storage.verbose.VerboseRegistry;
 import ac.grim.grimac.player.GrimPlayer;
+import ac.grim.grimac.utils.math.GrimMath;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,26 +25,16 @@ public class Check extends GrimProcessor implements AbstractCheck {
     private static final FlagEvent.Channel FLAG_CHANNEL = GrimAPI.INSTANCE.getEventBus().get(FlagEvent.class);
     private static final ThreadLocal<VerboseBuf> VERBOSE = ThreadLocal.withInitial(VerboseBuf::new);
 
-    // violations
-    public double violations;
     private long lastViolationTime;
     private final VerboseBuf verbose = VERBOSE.get();
 
-    // check data
-    private final @NotNull String checkName;
-    private final @NotNull String configName;
-    private final @NotNull String alternativeName;
-    private final @NotNull String stableKey;
-    private final boolean experimental;
-    private final @NotNull String defaultDescription;
-    private final double defaultDecay;
-    private final double defaultSetbackVL;
+    // the JVM spec doesn't guarantee that this is cached, but it usually is
+    private final @NotNull CheckData checkData;
 
     // configurable
     private @NotNull String displayName;
     private @NotNull String description;
-    private double decay;
-    private double setbackVL;
+    private int setbackVL;
     @Setter private boolean isEnabled;
 
     // permissions
@@ -53,24 +45,77 @@ public class Check extends GrimProcessor implements AbstractCheck {
     public Check(final @NotNull GrimPlayer player) {
         super(player, false);
 
-        final CheckData checkData = this.getClass().getAnnotation(CheckData.class);
+        this.checkData = this.getClass().getAnnotation(CheckData.class);
         if (checkData == null) {
             throw new IllegalStateException("Check class must have @CheckData annotation. Consider using GrimProcessor instead.");
         }
 
-        this.checkName = checkData.name();
-        this.configName = checkData.configName().equals("DEFAULT")
-                ? this.checkName
-                : checkData.configName();
-        this.defaultDecay = checkData.decay();
-        this.defaultSetbackVL = checkData.setback();
-        this.alternativeName = checkData.alternativeName();
-        this.experimental = checkData.experimental();
-        this.description = this.defaultDescription = checkData.description();
-        this.stableKey = checkData.stableKey();
-        this.displayName = this.checkName;
+        this.description = this.getDefaultDescription();
+        this.displayName = this.getCheckName();
 
         reload();
+    }
+
+    @Contract(pure = true)
+    @Override
+    public final @NotNull String getCheckName() {
+        return checkData.name();
+    }
+
+    @Contract(pure = true)
+    @Override
+    public @NotNull String getConfigName() {
+        String configName = checkData.configName();
+        return configName.equals("DEFAULT") ? this.getCheckName() : configName;
+    }
+
+    @Contract(pure = true)
+    @Override
+    public final @NotNull String getAlternativeName() {
+        return checkData.alternativeName();
+    }
+
+    @Contract(pure = true)
+    @Override
+    public final @NotNull String getStableKey() {
+        return checkData.stableKey();
+    }
+
+    @Contract(pure = true)
+    @Override
+    public final boolean isExperimental() {
+        return checkData.experimental();
+    }
+
+    @Contract(pure = true)
+    public final @NotNull String getDefaultDescription() {
+        return checkData.description();
+    }
+
+    @Contract(pure = true)
+    public final int getDefaultSetbackVL() {
+        return checkData.setback();
+    }
+
+    // must be `double` because AbstractCheck expects it
+    @Contract(pure = true)
+    @Override
+    public double getViolations() {
+        return player.punishmentManager.getViolations(this);
+    }
+
+    // must be `double` because AbstractCheck expects it
+    @Contract(pure = true)
+    @Override
+    public double getSetbackVL() {
+        return setbackVL;
+    }
+
+    @Contract(pure = true)
+    @Deprecated(forRemoval = true)
+    @Override
+    public double getDecay() {
+        return 0;
     }
 
     public boolean shouldModifyPackets() {
@@ -128,22 +173,24 @@ public class Check extends GrimProcessor implements AbstractCheck {
     }
 
     private boolean recordFlag(@NotNull Supplier<String> verbose) {
-        if (player.disableGrim || (experimental && !player.isExperimentalChecks()) || exemptPermission)
+        if (player.disableGrim || (isExperimental() && !player.isExperimentalChecks()) || exemptPermission)
             return false; // Avoid calling event if disabled
 
         if (FLAG_CHANNEL.fire(player, this, verbose)) return false;
 
         player.punishmentManager.handleViolation(this);
         lastViolationTime = System.currentTimeMillis();
-        violations++;
-        String verboseWithoutGl = verbose.get().replaceAll(" /gl .*", "");
+
+        String v = verbose.get();
+        String renderedVerbose = v == null ? "" : v;
+        String verboseWithoutGl = renderedVerbose.replaceAll(" /gl .*", "");
         GrimAPI.INSTANCE.getDataStoreLifecycle().liveWriteHooks()
-                .recordFlagFromCheck(player, this, violations, verboseWithoutGl);
+                .recordFlagFromCheck(player, this, getViolations(), verboseWithoutGl);
         return true;
     }
 
     private boolean recordFlag(@NotNull BinaryVerbose verbose) {
-        if (player.disableGrim || (experimental && !player.isExperimentalChecks()) || exemptPermission)
+        if (player.disableGrim || (isExperimental() && !player.isExperimentalChecks()) || exemptPermission)
             return false; // Avoid calling event if disabled
 
         Supplier<String> rendered = verbose.rendered();
@@ -153,9 +200,8 @@ public class Check extends GrimProcessor implements AbstractCheck {
 
         player.punishmentManager.handleViolation(this);
         lastViolationTime = System.currentTimeMillis();
-        violations++;
         GrimAPI.INSTANCE.getDataStoreLifecycle().liveWriteHooks()
-                .recordFlagDataFromCheck(player, this, violations, verboseData);
+                .recordFlagDataFromCheck(player, this, getViolations(), verboseData);
         return true;
     }
 
@@ -170,10 +216,10 @@ public class Check extends GrimProcessor implements AbstractCheck {
     }
 
     public final void registerVerboseTemplates(@Nullable VerboseRegistry registry) {
-        if (registry == null || stableKey.isEmpty()) return;
+        if (registry == null || getStableKey().isEmpty()) return;
         String pluginVersion = GrimAPI.INSTANCE.getExternalAPI().getGrimVersion();
         for (Verbose template : Verbose.declaredBy(getClass(), Check.class)) {
-            registry.registerTemplate(stableKey, checkName, description, pluginVersion, template);
+            registry.registerTemplate(this.getStableKey(), this.getCheckName(), description, pluginVersion, template);
         }
     }
 
@@ -209,18 +255,13 @@ public class Check extends GrimProcessor implements AbstractCheck {
         return false;
     }
 
-    public final void reward() {
-        violations = Math.max(0, violations - decay);
-    }
-
     @Override
     public final void reload(@NotNull ConfigManager configuration) {
-        decay = configuration.getDoubleElse(getConfigName() + ".decay", defaultDecay);
-        setbackVL = configuration.getDoubleElse(getConfigName() + ".setbackvl", defaultSetbackVL);
-        displayName = configuration.getStringElse(getConfigName() + ".displayname", checkName);
-        description = configuration.getStringElse(getConfigName() + ".description", defaultDescription);
+        setbackVL = GrimMath.ceil(configuration.getDoubleElse(getConfigName() + ".setbackvl", getDefaultSetbackVL()));
+        displayName = configuration.getStringElse(getConfigName() + ".displayname", getCheckName());
+        description = configuration.getStringElse(getConfigName() + ".description", getDefaultDescription());
 
-        if (setbackVL == -1) setbackVL = Double.MAX_VALUE;
+        if (setbackVL == -1) setbackVL = Integer.MAX_VALUE;
         super.reload(configuration);
     }
 
@@ -240,7 +281,7 @@ public class Check extends GrimProcessor implements AbstractCheck {
     }
 
     public boolean shouldSetback() {
-        return !noSetbackPermission && violations > setbackVL;
+        return !noSetbackPermission && getViolations() > setbackVL;
     }
 
     public boolean executeViolationSetback() {

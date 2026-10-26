@@ -211,8 +211,6 @@ public class ExplosionHandler extends Check implements PacketSendListener, PostP
             if (player.likelyExplosions.offset > offsetToFlag) {
                 boolean ignored = player.likelyExplosions.offset == Integer.MAX_VALUE;
                 flagWithSetback(V.write(verbose()).bool(ignored).f64(offset));
-            } else {
-                reward();
             }
         }
     }

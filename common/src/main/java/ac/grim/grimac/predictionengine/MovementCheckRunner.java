@@ -308,8 +308,6 @@ public class MovementCheckRunner extends GrimProcessor {
                 if (!correctMainHand && !correctOffhand) {
                     // Entity control cheats!  Set the player back
                     vehicleC.flag();
-                } else {
-                    vehicleC.reward();
                 }
             }
         }

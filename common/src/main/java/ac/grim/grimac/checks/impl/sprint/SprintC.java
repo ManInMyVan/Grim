@@ -34,7 +34,6 @@ public class SprintC extends Check implements PostPredictionListener {
                 if (flaggedLastTick) flagWithSetback();
                 flaggedLastTick = true;
             } else {
-                reward();
                 flaggedLastTick = false;
             }
         }

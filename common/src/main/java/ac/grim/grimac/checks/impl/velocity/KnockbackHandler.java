@@ -23,7 +23,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 // We are making a velocity sandwich between two pieces of transaction packets (bread)
-@CheckData(name = "AntiKB", stableKey = "grim.velocity.anti_knockback", alternativeName = "AntiKnockback", configName = "Knockback", description = "Did not take the expected entity knockback", setback = 10, decay = 0.025)
+@CheckData(name = "AntiKB", stableKey = "grim.velocity.anti_knockback", alternativeName = "AntiKnockback", configName = "Knockback", description = "Did not take the expected entity knockback", setback = 10)
 public class KnockbackHandler extends Check implements PacketSendListener, PostPredictionListener {
     private static final Verbose V = Verbose.of("[ignored knockback|o: {offset}]");
 
@@ -220,8 +220,6 @@ public class KnockbackHandler extends Check implements PacketSendListener, PostP
                         if (player.likelyKB.offset >= immediate || threshold >= maxAdv) {
                             setbackIfAboveSetbackVL();
                         }
-                    } else {
-                        reward();
                     }
                 }
             } else if (threshold > 0.05) {

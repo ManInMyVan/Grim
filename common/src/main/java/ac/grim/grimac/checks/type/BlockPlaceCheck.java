@@ -62,7 +62,7 @@ public class BlockPlaceCheck extends Check {
     }
 
     protected boolean shouldCancel() {
-        return cancelVL >= 0 && violations >= cancelVL;
+        return cancelVL >= 0 && getViolations() >= cancelVL;
     }
 
     protected SimpleCollisionBox getCombinedBox(final BlockPlace place) {
