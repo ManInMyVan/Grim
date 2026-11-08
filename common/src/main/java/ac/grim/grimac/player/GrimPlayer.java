@@ -860,9 +860,11 @@ public class GrimPlayer implements GrimUser {
     }
 
     public void closeInventory() {
-        if (platformPlayer != null) {
-            platformPlayer.closeInventory();
-        }
+        if (platformPlayer == null) return;
+        // Checks run on the netty thread and Bukkit only closes inventories on the main thread (the player's region on Folia)
+        GrimAPI.INSTANCE.getScheduler().getEntityScheduler().execute(platformPlayer, GrimAPI.INSTANCE.getGrimPlugin(), () -> {
+            if (platformPlayer != null) platformPlayer.closeInventory();
+        }, null, 0);
     }
 
     public boolean canPlaceGameMasterBlocks() {
