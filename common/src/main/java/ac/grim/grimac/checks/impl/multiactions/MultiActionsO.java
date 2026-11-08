@@ -18,6 +18,9 @@ public class MultiActionsO extends Check implements RotationListener {
     @Override
     public void process(@NotNull RotationUpdate rotationUpdate) {
         if (player.packetStateData.lastPacketWasTeleport) return;
+        // After a teleport the client resends the rotation it was given, since its own last sent rotation is from before
+        // the teleport. That and any other look packet that doesn't turn isn't rotating
+        if (rotationUpdate.deltaYawABS() == 0 && rotationUpdate.deltaPitchABS() == 0) return;
         if (!player.openWindow.mustBeOpen() || player.openWindow.getTicksOpen() == 0) return;
         if (flag() && shouldModifyPackets()) {
             player.closeInventory();
